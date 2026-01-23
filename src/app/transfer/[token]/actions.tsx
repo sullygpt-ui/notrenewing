@@ -6,10 +6,11 @@ import { Button } from '@/components/ui';
 
 interface TransferActionsProps {
   purchaseId: string;
-  isPastDeadline: boolean;
+  isPastTransferDeadline: boolean;
+  hasTransferInfo: boolean;
 }
 
-export function TransferActions({ purchaseId, isPastDeadline }: TransferActionsProps) {
+export function TransferActions({ purchaseId, isPastTransferDeadline, hasTransferInfo }: TransferActionsProps) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [showDispute, setShowDispute] = useState(false);
@@ -68,14 +69,27 @@ export function TransferActions({ purchaseId, isPastDeadline }: TransferActionsP
 
   return (
     <div className="space-y-4">
-      <Button
-        onClick={handleConfirm}
-        disabled={loading}
-        className="w-full"
-        size="lg"
-      >
-        {loading ? 'Processing...' : 'Confirm I Received the Domain'}
-      </Button>
+      {hasTransferInfo ? (
+        <>
+          <Button
+            onClick={handleConfirm}
+            disabled={loading}
+            className="w-full"
+            size="lg"
+          >
+            {loading ? 'Processing...' : 'Confirm I Received the Domain'}
+          </Button>
+          <p className="text-center text-sm text-gray-500">
+            Only click this after you have successfully transferred the domain to your registrar account.
+          </p>
+        </>
+      ) : (
+        <div className="bg-gray-100 rounded-xl p-4 text-center">
+          <p className="text-gray-600 text-sm">
+            Waiting for seller to provide transfer information...
+          </p>
+        </div>
+      )}
 
       {!showDispute ? (
         <button
@@ -88,9 +102,11 @@ export function TransferActions({ purchaseId, isPastDeadline }: TransferActionsP
         <div className="bg-gray-50 rounded-xl p-4 space-y-4">
           <h4 className="font-medium text-gray-900">Open a Dispute</h4>
           <p className="text-sm text-gray-600">
-            {isPastDeadline
-              ? 'The 72-hour transfer deadline has passed. Please describe what happened.'
-              : 'Please describe the issue you are experiencing with this transfer.'}
+            {isPastTransferDeadline && !hasTransferInfo
+              ? 'The 72-hour transfer deadline has passed and the seller has not provided transfer information.'
+              : hasTransferInfo
+              ? 'Please describe the issue you are experiencing with this transfer.'
+              : 'Please describe why you are opening a dispute.'}
           </p>
           <textarea
             value={disputeReason}

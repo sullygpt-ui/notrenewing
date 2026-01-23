@@ -328,6 +328,130 @@ export async function sendTransferCompleteEmail(
   }
 }
 
+// Buyer: Transfer initiated by seller with auth code
+export async function sendTransferInitiatedEmail(
+  to: string,
+  domainName: string,
+  authCode: string,
+  notes: string | null,
+  confirmationDeadline: Date,
+  purchaseId: string
+): Promise<EmailResult> {
+  const deadlineStr = confirmationDeadline.toLocaleDateString('en-US', {
+    weekday: 'long',
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  });
+
+  try {
+    await resend.emails.send({
+      from: FROM_EMAIL,
+      to,
+      subject: `Transfer ready: ${domainName} - Auth code inside`,
+      html: `
+        <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto;">
+          <h1 style="color: #111827;">Your Domain Transfer is Ready!</h1>
+          <p style="color: #4b5563; font-size: 16px;">
+            The seller has initiated the transfer for <strong>${domainName}</strong>.
+          </p>
+
+          <div style="background: #f3f4f6; padding: 16px; border-radius: 8px; margin: 16px 0;">
+            <h3 style="margin: 0 0 12px 0; color: #111827;">Authorization Code</h3>
+            <p style="font-family: monospace; font-size: 18px; background: white; padding: 12px;
+                      border: 2px dashed #d1d5db; border-radius: 4px; margin: 0; word-break: break-all;">
+              ${authCode}
+            </p>
+          </div>
+
+          ${notes ? `
+          <div style="background: #fffbeb; border: 1px solid #f59e0b; padding: 16px; border-radius: 8px; margin: 16px 0;">
+            <h3 style="margin: 0 0 8px 0; color: #92400e;">Seller Notes</h3>
+            <p style="margin: 0; color: #92400e;">${notes}</p>
+          </div>
+          ` : ''}
+
+          <div style="background: #f3f4f6; padding: 16px; border-radius: 8px; margin: 16px 0;">
+            <h3 style="margin: 0 0 12px 0; color: #111827;">How to Complete the Transfer</h3>
+            <ol style="margin: 0; padding-left: 20px; color: #4b5563;">
+              <li style="margin-bottom: 8px;">Log into your domain registrar (GoDaddy, Namecheap, etc.)</li>
+              <li style="margin-bottom: 8px;">Start a domain transfer for ${domainName}</li>
+              <li style="margin-bottom: 8px;">Enter the authorization code above when prompted</li>
+              <li style="margin-bottom: 8px;">Complete any approval steps (check your email)</li>
+              <li>Once the domain is in your account, confirm receipt below</li>
+            </ol>
+          </div>
+
+          <div style="background: #fef2f2; border: 1px solid #dc2626; padding: 16px; border-radius: 8px; margin: 16px 0;">
+            <p style="margin: 0; color: #991b1b;">
+              <strong>Important:</strong> Please confirm receipt by <strong>${deadlineStr}</strong>.
+              After this date, payment will be automatically released to the seller.
+            </p>
+          </div>
+
+          <a href="${APP_URL}/transfer/${purchaseId}"
+             style="display: inline-block; background: #4f46e5; color: white; padding: 12px 24px;
+                    border-radius: 8px; text-decoration: none; margin-top: 16px;">
+            Confirm Transfer Receipt
+          </a>
+
+          <p style="color: #9ca3af; font-size: 12px; margin-top: 32px;">
+            Having trouble? You can open a dispute from the transfer page if you don't receive the domain.
+          </p>
+        </div>
+      `,
+    });
+    return { success: true };
+  } catch (error) {
+    console.error('Failed to send transfer initiated email:', error);
+    return { success: false, error: 'Failed to send email' };
+  }
+}
+
+// Buyer: Auto-release notification
+export async function sendAutoReleaseEmail(
+  to: string,
+  domainName: string
+): Promise<EmailResult> {
+  try {
+    await resend.emails.send({
+      from: FROM_EMAIL,
+      to,
+      subject: `Payment released: ${domainName}`,
+      html: `
+        <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto;">
+          <h1 style="color: #111827;">Payment Auto-Released</h1>
+          <p style="color: #4b5563; font-size: 16px;">
+            The 7-day confirmation period for <strong>${domainName}</strong> has ended.
+          </p>
+
+          <div style="background: #dbeafe; border: 1px solid #3b82f6; padding: 16px; border-radius: 8px; margin: 16px 0;">
+            <p style="margin: 0; color: #1e40af;">
+              Since no dispute was opened, payment has been automatically released to the seller.
+              This is standard procedure to ensure sellers receive timely payment.
+            </p>
+          </div>
+
+          <p style="color: #4b5563; font-size: 16px;">
+            If you did not receive the domain and believe this is an error, please contact support
+            immediately at support@notrenewing.com.
+          </p>
+
+          <a href="${APP_URL}/browse"
+             style="display: inline-block; background: #4f46e5; color: white; padding: 12px 24px;
+                    border-radius: 8px; text-decoration: none; margin-top: 16px;">
+            Browse More Domains
+          </a>
+        </div>
+      `,
+    });
+    return { success: true };
+  } catch (error) {
+    console.error('Failed to send auto-release email:', error);
+    return { success: false, error: 'Failed to send email' };
+  }
+}
+
 // Seller: Payout sent
 export async function sendPayoutEmail(
   to: string,

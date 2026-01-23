@@ -24,8 +24,11 @@ export default async function TransferPage({ params }: TransferPageProps) {
   const listing = purchase.listings as any;
   const isCompleted = purchase.transfer_status === 'completed';
   const isDisputed = purchase.transfer_status === 'disputed';
-  const deadline = purchase.transfer_deadline ? new Date(purchase.transfer_deadline) : null;
-  const isPastDeadline = deadline && deadline < new Date();
+  const transferDeadline = purchase.transfer_deadline ? new Date(purchase.transfer_deadline) : null;
+  const isPastTransferDeadline = transferDeadline && transferDeadline < new Date();
+  const hasTransferInfo = !!purchase.transfer_initiated_at;
+  const confirmationDeadline = purchase.buyer_confirmation_deadline ? new Date(purchase.buyer_confirmation_deadline) : null;
+  const isAutoReleased = purchase.auto_released;
 
   return (
     <div className="max-w-2xl mx-auto px-4 py-12">
@@ -64,23 +67,65 @@ export default async function TransferPage({ params }: TransferPageProps) {
               {purchase.transfer_status.replace(/_/g, ' ').replace(/\b\w/g, (l: string) => l.toUpperCase())}
             </span>
           </div>
-          {deadline && !isCompleted && (
+          {transferDeadline && !isCompleted && !hasTransferInfo && (
             <div className="flex items-center justify-between">
-              <span className="text-gray-600">Transfer Deadline</span>
-              <span className={`font-medium ${isPastDeadline ? 'text-red-600' : ''}`}>
-                {deadline.toLocaleDateString()} {deadline.toLocaleTimeString()}
+              <span className="text-gray-600">Seller Deadline</span>
+              <span className={`font-medium ${isPastTransferDeadline ? 'text-red-600' : ''}`}>
+                {transferDeadline.toLocaleDateString()} {transferDeadline.toLocaleTimeString()}
+              </span>
+            </div>
+          )}
+          {confirmationDeadline && !isCompleted && hasTransferInfo && (
+            <div className="flex items-center justify-between">
+              <span className="text-gray-600">Auto-Release Date</span>
+              <span className="font-medium text-orange-600">
+                {confirmationDeadline.toLocaleDateString()} {confirmationDeadline.toLocaleTimeString()}
               </span>
             </div>
           )}
         </div>
       </div>
 
-      {!isCompleted && !isDisputed && (
+      {/* Auth Code Section - Show when seller has provided transfer info */}
+      {hasTransferInfo && !isCompleted && !isDisputed && (
+        <div className="bg-green-50 rounded-xl p-6 mb-6 border border-green-200">
+          <h3 className="font-semibold text-green-900 mb-4">Transfer Information Ready</h3>
+
+          <div className="bg-white p-4 rounded-lg border border-green-300 mb-4">
+            <p className="text-sm text-gray-600 mb-2">Authorization Code</p>
+            <p className="font-mono text-lg font-medium text-gray-900 break-all">
+              {purchase.auth_code}
+            </p>
+          </div>
+
+          {purchase.transfer_notes && (
+            <div className="bg-yellow-50 p-4 rounded-lg border border-yellow-200 mb-4">
+              <p className="text-sm text-yellow-800 font-medium mb-1">Seller Notes</p>
+              <p className="text-yellow-900">{purchase.transfer_notes}</p>
+            </div>
+          )}
+
+          <div className="bg-orange-50 p-4 rounded-lg border border-orange-200">
+            <p className="text-sm text-orange-800">
+              <strong>Important:</strong> Payment will be automatically released to the seller on{' '}
+              <strong>{confirmationDeadline?.toLocaleDateString()}</strong> if you don&apos;t confirm
+              receipt or open a dispute before then.
+            </p>
+          </div>
+        </div>
+      )}
+
+      {/* Waiting for seller - no transfer info yet */}
+      {!hasTransferInfo && !isCompleted && !isDisputed && (
         <div className="bg-blue-50 rounded-xl p-6 mb-6">
-          <h3 className="font-semibold text-blue-900 mb-2">What to Expect</h3>
+          <h3 className="font-semibold text-blue-900 mb-2">Waiting for Seller</h3>
+          <p className="text-blue-800 text-sm mb-4">
+            The seller has until {transferDeadline?.toLocaleDateString()} {transferDeadline?.toLocaleTimeString()} to
+            provide transfer information.
+          </p>
           <ol className="list-decimal list-inside text-blue-800 space-y-2 text-sm">
-            <li>The seller will initiate the domain transfer within 72 hours</li>
-            <li>You&apos;ll receive an auth code via email from the seller or registrar</li>
+            <li>The seller will provide the authorization code</li>
+            <li>You&apos;ll receive an email when transfer info is ready</li>
             <li>Use the auth code to accept the transfer at your registrar</li>
             <li>Once you have control of the domain, confirm receipt below</li>
           </ol>
@@ -92,8 +137,17 @@ export default async function TransferPage({ params }: TransferPageProps) {
           <div className="text-4xl mb-2">✓</div>
           <h3 className="font-semibold text-green-900 mb-2">Transfer Complete</h3>
           <p className="text-green-700 text-sm">
-            You confirmed receipt of this domain on{' '}
-            {purchase.transfer_confirmed_at && new Date(purchase.transfer_confirmed_at).toLocaleDateString()}.
+            {isAutoReleased ? (
+              <>
+                Payment was automatically released on{' '}
+                {purchase.transfer_confirmed_at && new Date(purchase.transfer_confirmed_at).toLocaleDateString()}.
+              </>
+            ) : (
+              <>
+                You confirmed receipt of this domain on{' '}
+                {purchase.transfer_confirmed_at && new Date(purchase.transfer_confirmed_at).toLocaleDateString()}.
+              </>
+            )}{' '}
             The seller has been paid.
           </p>
         </div>
@@ -106,7 +160,11 @@ export default async function TransferPage({ params }: TransferPageProps) {
           </p>
         </div>
       ) : (
-        <TransferActions purchaseId={purchase.id} isPastDeadline={isPastDeadline || false} />
+        <TransferActions
+          purchaseId={purchase.id}
+          isPastTransferDeadline={isPastTransferDeadline || false}
+          hasTransferInfo={hasTransferInfo}
+        />
       )}
     </div>
   );

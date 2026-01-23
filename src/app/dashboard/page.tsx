@@ -40,11 +40,22 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
 
   const purchases = (purchasesData || []) as Purchase[];
 
+  // Create a map of listing ID to purchase for quick lookup
+  const purchaseByListingId = new Map(purchases.map(p => [p.listing_id, p]));
+
   const activeListings = listings.filter(l => l.status === 'active');
   const pendingPayment = listings.filter(l => l.status === 'pending_payment');
   const pendingVerification = listings.filter(l => l.status === 'pending_verification');
   const soldListings = listings.filter(l => l.status === 'sold');
-  const pendingTransfers = purchases.filter(p => p.transfer_status === 'pending');
+
+  // Pending transfers that need seller action (no transfer info yet)
+  const pendingTransfers = purchases.filter(p =>
+    p.transfer_status === 'pending' && !p.transfer_initiated_at
+  );
+  // Transfers awaiting buyer confirmation
+  const awaitingBuyerConfirmation = purchases.filter(p =>
+    p.transfer_status === 'pending' && p.transfer_initiated_at
+  );
 
   // Sort listings: pending first (payment, then verification), then active, then others
   const statusPriority: Record<string, number> = {
@@ -129,12 +140,61 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
       {/* Pending Transfers Alert */}
       {pendingTransfers.length > 0 && (
         <div className="mb-8 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
-          <div className="flex items-center gap-2">
-            <Badge variant="warning">Action Required</Badge>
-            <p className="text-sm text-yellow-800">
-              You have {pendingTransfers.length} pending transfer{pendingTransfers.length !== 1 ? 's' : ''}.
-              Please complete domain transfers within 72 hours.
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Badge variant="warning">Action Required</Badge>
+              <p className="text-sm text-yellow-800">
+                You have {pendingTransfers.length} domain{pendingTransfers.length !== 1 ? 's' : ''} that need transfer info.
+                Submit auth codes within 72 hours.
+              </p>
+            </div>
+          </div>
+          <div className="mt-3 space-y-2">
+            {pendingTransfers.map(purchase => {
+              const listing = listings.find(l => l.id === purchase.listing_id);
+              return (
+                <div key={purchase.id} className="flex items-center justify-between bg-white p-2 rounded border border-yellow-200">
+                  <span className="font-medium text-gray-900">{listing?.domain_name}</span>
+                  <Link href={`/dashboard/transfers/${purchase.id}`}>
+                    <Button size="sm" variant="outline">Submit Transfer Info</Button>
+                  </Link>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
+      {/* Awaiting Buyer Confirmation */}
+      {awaitingBuyerConfirmation.length > 0 && (
+        <div className="mb-8 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+          <div className="flex items-center gap-2 mb-3">
+            <Badge variant="info">Awaiting Confirmation</Badge>
+            <p className="text-sm text-blue-800">
+              {awaitingBuyerConfirmation.length} transfer{awaitingBuyerConfirmation.length !== 1 ? 's' : ''} awaiting buyer confirmation.
+              Payment will auto-release after 7 days.
             </p>
+          </div>
+          <div className="space-y-2">
+            {awaitingBuyerConfirmation.map(purchase => {
+              const listing = listings.find(l => l.id === purchase.listing_id);
+              const deadline = purchase.buyer_confirmation_deadline ? new Date(purchase.buyer_confirmation_deadline) : null;
+              return (
+                <div key={purchase.id} className="flex items-center justify-between bg-white p-2 rounded border border-blue-200">
+                  <div>
+                    <span className="font-medium text-gray-900">{listing?.domain_name}</span>
+                    {deadline && (
+                      <span className="ml-2 text-xs text-blue-600">
+                        Auto-release: {deadline.toLocaleDateString()}
+                      </span>
+                    )}
+                  </div>
+                  <Link href={`/dashboard/transfers/${purchase.id}`}>
+                    <Button size="sm" variant="ghost">View</Button>
+                  </Link>
+                </div>
+              );
+            })}
           </div>
         </div>
       )}
@@ -181,6 +241,15 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
                     {listing.status === 'pending_verification' && (
                       <Link href={`/listings/${listing.id}/verify`}>
                         <Button variant="outline" size="sm">Verify</Button>
+                      </Link>
+                    )}
+                    {listing.status === 'sold' && purchaseByListingId.get(listing.id) && (
+                      <Link href={`/dashboard/transfers/${purchaseByListingId.get(listing.id)!.id}`}>
+                        <Button variant="outline" size="sm">
+                          {purchaseByListingId.get(listing.id)!.transfer_initiated_at
+                            ? 'View Transfer'
+                            : 'Transfer'}
+                        </Button>
                       </Link>
                     )}
                   </div>

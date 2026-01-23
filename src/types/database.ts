@@ -55,6 +55,11 @@ export interface Purchase {
   seller_payout: number | null;
   transfer_status: TransferStatus;
   transfer_deadline: string | null;
+  transfer_initiated_at: string | null;
+  auth_code: string | null;
+  transfer_notes: string | null;
+  buyer_confirmation_deadline: string | null;
+  auto_released: boolean;
   transfer_confirmed_at: string | null;
   dispute_reason: string | null;
   dispute_opened_at: string | null;
