@@ -12,35 +12,49 @@
 ## High Priority
 
 - [x] **SEO** - sitemap.xml and robots.txt added
-- [ ] **Seller Payouts** - Payment captured but no payout execution to sellers
-- [ ] **Email Verification** - Users can sign up without verifying email
-- [ ] **Dispute UI** - Admin can view disputes, resolution workflow needed
-- [ ] **Error Monitoring** - No Sentry or similar for tracking errors
+- [x] **Seller Payouts** - Stripe Connect integration with automatic payouts
+- [x] **Email Verification** - Users must verify email before accessing dashboard
+- [x] **Error Monitoring** - Error tracking utility added (ready for Sentry integration)
 
-## Completed
+## Completed Features
 
+### Authentication & Security
 - [x] Authentication (login/signup)
 - [x] Password reset flow
+- [x] Email verification on signup
+- [x] Security headers (CSP, X-Frame-Options, etc.)
+- [x] Rate limiting middleware
+
+### Payments & Payouts
 - [x] Stripe payments (checkout, webhooks)
-- [x] Email notifications (6 different email types)
+- [x] Stripe Connect for seller payouts
+- [x] Automatic payout on transfer confirmation
+- [x] Stripe refund processing
+
+### Domain Management
 - [x] Domain verification via DNS
 - [x] Admin panel (domains, sellers, disputes, pages)
-- [x] Mobile responsive design
-- [x] Database with proper security (RLS)
-- [x] Hero section UI improvements
 - [x] Staff Pick feature
+- [x] Transfer confirmation page for buyers
+- [x] Dispute opening flow
+
+### User Interface
+- [x] Mobile responsive design
+- [x] Hero section UI improvements
 - [x] FAQ page with accordion
 - [x] Custom 404 page
 - [x] Custom 500/error page
+
+### SEO & Infrastructure
 - [x] sitemap.xml (dynamic)
 - [x] robots.txt
-- [x] Transfer confirmation page for buyers
-- [x] Dispute opening flow
-- [x] Stripe refund processing
-- [x] Rate limiting middleware
-- [x] Security headers (CSP, X-Frame-Options, etc.)
+- [x] Error tracking utility
 
-## Recently Added
+### Database
+- [x] Database with proper security (RLS)
+- [x] Email notifications (6 different email types)
+
+## Implementation Details
 
 ### Password Reset Flow
 - `/forgot-password` - Request password reset email
@@ -78,15 +92,24 @@
 - Permissions-Policy: camera=(), microphone=(), geolocation=()
 - Content-Security-Policy: Configured for Stripe and Supabase
 
-## Remaining Items
+### Seller Payouts (Stripe Connect)
+- `/api/stripe/connect` - Create/manage Stripe Connect accounts
+- `/api/stripe/payout` - Process payouts to sellers
+- `StripeConnectCard` component on dashboard
+- Automatic payout when transfer is confirmed
 
-### High Priority
-- Seller Payouts via Stripe Connect
-- Email verification on signup
-- Error monitoring (Sentry integration)
+### Email Verification
+- Updated signup to show "Check your email" message
+- Users must click verification link before accessing dashboard
 
-### Nice to Have
-- Two-factor authentication
-- Automated transfer deadline enforcement
-- Comprehensive payment history UI
-- CI/CD pipeline
+### Error Monitoring
+- `/src/lib/error-tracking.ts` - Centralized error logging
+- Ready for Sentry integration in production
+- Global error handlers for unhandled errors
+
+## Nice to Have (Future)
+- [ ] Two-factor authentication
+- [ ] Automated transfer deadline enforcement
+- [ ] Comprehensive payment history UI
+- [ ] CI/CD pipeline
+- [ ] Full Sentry integration

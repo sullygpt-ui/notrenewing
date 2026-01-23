@@ -2,6 +2,7 @@
 
 import { useEffect } from 'react';
 import { Button } from '@/components/ui';
+import { captureError } from '@/lib/error-tracking';
 
 export default function Error({
   error,
@@ -11,7 +12,10 @@ export default function Error({
   reset: () => void;
 }) {
   useEffect(() => {
-    console.error('Application error:', error);
+    captureError(error, {
+      action: 'error-boundary',
+      metadata: { digest: error.digest },
+    });
   }, [error]);
 
   return (

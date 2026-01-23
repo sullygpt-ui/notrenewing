@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { createClient } from '@/lib/supabase/server';
 import { Card, CardHeader, CardTitle, CardContent, Button, Badge } from '@/components/ui';
 import { ListingFilters } from '@/components/domain';
+import { StripeConnectCard } from '@/components/dashboard';
 import type { Listing, Purchase } from '@/types/database';
 
 export const dynamic = 'force-dynamic';
@@ -118,6 +119,11 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
             <p className="text-3xl font-bold text-gray-900">${(totalEarnings / 100).toFixed(2)}</p>
           </CardContent>
         </Card>
+      </div>
+
+      {/* Stripe Connect */}
+      <div className="mb-8">
+        <StripeConnectCard />
       </div>
 
       {/* Pending Transfers Alert */}
