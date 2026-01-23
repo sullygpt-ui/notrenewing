@@ -15,7 +15,7 @@ export default async function SecuritySettingsPage() {
   }
 
   const { data: userData } = await supabase
-    .from('users')
+    .from('profiles')
     .select('totp_enabled, totp_verified_at')
     .eq('id', user.id)
     .single();

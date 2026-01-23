@@ -19,7 +19,7 @@ export async function POST(request: NextRequest) {
 
     // Get the user's TOTP secret
     const { data: userData } = await supabase
-      .from('users')
+      .from('profiles')
       .select('totp_secret, totp_enabled')
       .eq('id', user.id)
       .single();
@@ -37,7 +37,7 @@ export async function POST(request: NextRequest) {
 
     // Disable 2FA
     await supabase
-      .from('users')
+      .from('profiles')
       .update({
         totp_secret: null,
         totp_enabled: false,

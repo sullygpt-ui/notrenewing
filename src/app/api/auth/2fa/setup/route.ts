@@ -13,7 +13,7 @@ export async function POST(request: NextRequest) {
 
     // Check if 2FA is already enabled
     const { data: userData } = await supabase
-      .from('users')
+      .from('profiles')
       .select('totp_enabled')
       .eq('id', user.id)
       .single();
@@ -31,7 +31,7 @@ export async function POST(request: NextRequest) {
 
     // Store the secret temporarily (not enabled yet)
     await supabase
-      .from('users')
+      .from('profiles')
       .update({ totp_secret: secret })
       .eq('id', user.id);
 
