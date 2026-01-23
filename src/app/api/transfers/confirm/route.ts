@@ -4,7 +4,7 @@ import { sendTransferCompleteEmail, sendPayoutEmail } from '@/lib/email';
 import Stripe from 'stripe';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: '2025-04-30.basil',
+  apiVersion: '2025-12-15.clover',
 });
 
 export async function POST(request: NextRequest) {
@@ -101,8 +101,7 @@ export async function POST(request: NextRequest) {
 
     // Send payout email to seller
     if (seller?.user?.email) {
-      const payoutAmountDollars = payoutAmount / 100;
-      sendPayoutEmail(seller.user.email, listing.domain_name, payoutAmountDollars).catch(console.error);
+      sendPayoutEmail(seller.user.email, payoutAmount, listing.domain_name).catch(console.error);
     }
 
     return NextResponse.json({ success: true, payoutProcessed: payoutSuccess });

@@ -82,7 +82,7 @@ export default async function HomePage() {
               <h2 className="text-xl font-bold text-gray-900">Sponsored</h2>
               <Badge variant="warning">Ad</Badge>
             </div>
-            <DomainGrid listings={sponsoredDomains} showTier={false} />
+            <DomainGrid listings={sponsoredDomains} />
           </div>
         </section>
       )}

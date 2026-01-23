@@ -3,10 +3,9 @@ import type { Listing } from '@/types/database';
 
 interface DomainGridProps {
   listings: Listing[];
-  showTier?: boolean;
 }
 
-export function DomainGrid({ listings, showTier = true }: DomainGridProps) {
+export function DomainGrid({ listings }: DomainGridProps) {
   if (listings.length === 0) {
     return (
       <div className="text-center py-12">
@@ -21,7 +20,6 @@ export function DomainGrid({ listings, showTier = true }: DomainGridProps) {
         <DomainCard
           key={listing.id}
           listing={listing}
-          showTier={showTier}
           isSponsored={listing.is_sponsored}
         />
       ))}

@@ -5,6 +5,99 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 const FROM_EMAIL = process.env.FROM_EMAIL || 'NotRenewing <noreply@notrenewing.com>';
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
 
+// Generic email interface for template-based sending
+interface SendEmailOptions {
+  to: string;
+  template: string;
+  data: Record<string, any>;
+}
+
+// Generic email sending function
+export async function sendEmail({ to, template, data }: SendEmailOptions): Promise<EmailResult> {
+  const emailContent = getEmailTemplate(template, data);
+  if (!emailContent) {
+    console.error(`Unknown email template: ${template}`);
+    return { success: false, error: `Unknown template: ${template}` };
+  }
+
+  try {
+    await resend.emails.send({
+      from: FROM_EMAIL,
+      to,
+      subject: emailContent.subject,
+      html: emailContent.html,
+    });
+    return { success: true };
+  } catch (error) {
+    console.error(`Failed to send ${template} email:`, error);
+    return { success: false, error: 'Failed to send email' };
+  }
+}
+
+function getEmailTemplate(template: string, data: Record<string, any>): { subject: string; html: string } | null {
+  switch (template) {
+    case 'transfer_deadline_refund_buyer':
+      return {
+        subject: `Refund processed: ${data.domainName}`,
+        html: `
+          <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto;">
+            <h1 style="color: #111827;">Refund Processed</h1>
+            <p style="color: #4b5563; font-size: 16px;">
+              Hi ${data.buyerName},
+            </p>
+            <p style="color: #4b5563; font-size: 16px;">
+              The seller did not complete the transfer of <strong>${data.domainName}</strong> within the required 72-hour timeframe.
+              Your payment of <strong>${data.refundAmount}</strong> has been automatically refunded.
+            </p>
+            <div style="background: #dbeafe; border: 1px solid #3b82f6; padding: 16px; border-radius: 8px; margin: 16px 0;">
+              <p style="margin: 0; color: #1e40af;">
+                The refund should appear in your account within 5-10 business days, depending on your bank.
+              </p>
+            </div>
+            <a href="${APP_URL}/browse"
+               style="display: inline-block; background: #4f46e5; color: white; padding: 12px 24px;
+                      border-radius: 8px; text-decoration: none; margin-top: 16px;">
+              Browse Other Domains
+            </a>
+          </div>
+        `,
+      };
+
+    case 'transfer_deadline_refund_seller':
+      return {
+        subject: `Transfer deadline missed: ${data.domainName}`,
+        html: `
+          <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto;">
+            <h1 style="color: #dc2626;">Transfer Deadline Missed</h1>
+            <p style="color: #4b5563; font-size: 16px;">
+              Hi ${data.sellerName},
+            </p>
+            <p style="color: #4b5563; font-size: 16px;">
+              The 72-hour transfer deadline for <strong>${data.domainName}</strong> has passed without completion.
+            </p>
+            <div style="background: #fef2f2; border: 1px solid #dc2626; padding: 16px; border-radius: 8px; margin: 16px 0;">
+              <p style="margin: 0; color: #991b1b;">
+                The buyer has been automatically refunded. Your listing has been reactivated.
+              </p>
+            </div>
+            <p style="color: #4b5563; font-size: 14px;">
+              To avoid this in the future, please ensure you initiate domain transfers promptly after a sale.
+              If you had technical difficulties, please contact support.
+            </p>
+            <a href="${APP_URL}/dashboard"
+               style="display: inline-block; background: #4f46e5; color: white; padding: 12px 24px;
+                      border-radius: 8px; text-decoration: none; margin-top: 16px;">
+              View Dashboard
+            </a>
+          </div>
+        `,
+      };
+
+    default:
+      return null;
+  }
+}
+
 export interface EmailResult {
   success: boolean;
   error?: string;

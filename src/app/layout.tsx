@@ -1,12 +1,18 @@
 import type { Metadata } from 'next';
+import * as Sentry from '@sentry/nextjs';
 import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
 import './globals.css';
 
-export const metadata: Metadata = {
-  title: 'NotRenewing - Domain Marketplace',
-  description: 'Buy and sell non-renewal domains at a fixed $99 price',
-};
+export function generateMetadata(): Metadata {
+  return {
+    title: 'NotRenewing - Domain Marketplace',
+    description: 'Buy and sell non-renewal domains at a fixed $99 price',
+    other: {
+      ...Sentry.getTraceData(),
+    },
+  };
+}
 
 export default function RootLayout({
   children,

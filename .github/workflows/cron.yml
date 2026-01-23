@@ -1,0 +1,29 @@
+name: Transfer Deadline Enforcement
+
+on:
+  schedule:
+    # Run every hour
+    - cron: '0 * * * *'
+  workflow_dispatch:
+
+jobs:
+  enforce-deadlines:
+    name: Enforce Transfer Deadlines
+    runs-on: ubuntu-latest
+    steps:
+      - name: Call Transfer Deadline Endpoint
+        run: |
+          response=$(curl -s -w "\n%{http_code}" \
+            -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
+            "${{ secrets.APP_URL }}/api/cron/transfer-deadlines")
+
+          http_code=$(echo "$response" | tail -n 1)
+          body=$(echo "$response" | sed '$d')
+
+          echo "Response: $body"
+          echo "HTTP Code: $http_code"
+
+          if [ "$http_code" != "200" ]; then
+            echo "Error: API returned non-200 status code"
+            exit 1
+          fi
