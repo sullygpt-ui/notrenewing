@@ -1,6 +1,6 @@
 export type UserRole = 'seller' | 'admin';
 export type PayoutMethod = 'stripe' | 'paypal';
-export type ListingStatus = 'pending_verification' | 'active' | 'paused' | 'sold' | 'expired' | 'removed';
+export type ListingStatus = 'pending_payment' | 'pending_verification' | 'active' | 'paused' | 'sold' | 'expired' | 'removed';
 export type AITier = 'high' | 'medium' | 'low';
 export type TransferStatus = 'pending' | 'in_progress' | 'completed' | 'failed' | 'disputed';
 export type DisputeOutcome = 'buyer_refunded' | 'seller_paid' | 'admin_decision';
@@ -32,12 +32,14 @@ export interface Listing {
   expiration_date: string | null;
   ai_score: number | null;
   ai_tier: AITier | null;
+  ai_reasoning: string | null;
   ai_scored_at: string | null;
   status: ListingStatus;
   is_sponsored: boolean;
   sponsored_until: string | null;
   admin_featured: boolean;
   admin_hidden: boolean;
+  staff_pick: boolean;
   listed_at: string | null;
   expires_at: string | null;
   created_at: string;

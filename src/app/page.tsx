@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase/server';
-import { DomainGrid } from '@/components/domain';
+import { DomainGrid, HeroSearch } from '@/components/domain';
 import { Button, Badge } from '@/components/ui';
 import type { Listing } from '@/types/database';
 
@@ -17,6 +17,7 @@ export default async function HomePage() {
     .select('*')
     .eq('status', 'active')
     .eq('admin_hidden', false)
+    .eq('is_sponsored', false)
     .order('ai_score', { ascending: false })
     .limit(12);
 
@@ -45,27 +46,15 @@ export default async function HomePage() {
   return (
     <div>
       {/* Hero Section */}
-      <section className="bg-gradient-to-b from-primary-50 to-white py-16 md:py-24">
+      <section className="bg-primary-600 py-10 md:py-14">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
-            Domains You Won&apos;t Renew.
-            <br />
-            <span className="text-primary-600">Buyers Who Will.</span>
+          <h1 className="text-3xl md:text-4xl font-bold text-white mb-2">
+            Domains You Won&apos;t Renew. <span className="text-primary-200">Buyers Who Will.</span>
           </h1>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto mb-8">
-            The marketplace for domain portfolio cleanup. Every domain is $99.
-            No negotiation. No speculation. Just quick, certain liquidation.
+          <p className="text-primary-100 mb-6">
+            Every domain is $99. No negotiation.
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link href="/browse">
-              <Button size="lg">Browse Domains</Button>
-            </Link>
-            <Link href="/signup">
-              <Button variant="outline" size="lg">
-                Start Selling
-              </Button>
-            </Link>
-          </div>
+          <HeroSearch />
         </div>
       </section>
 
@@ -74,8 +63,8 @@ export default async function HomePage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between mb-8">
             <div>
-              <h2 className="text-2xl font-bold text-gray-900">Top Picks</h2>
-              <p className="text-gray-500 mt-1">AI-curated domains with high buyer interest</p>
+              <h2 className="text-2xl font-bold text-gray-900">Leaderboard</h2>
+              <p className="text-gray-500 mt-1">Domains with High Buyer Interest</p>
             </div>
             <Link href="/browse">
               <Button variant="ghost">View All</Button>

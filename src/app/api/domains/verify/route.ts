@@ -1,7 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { verifyDomainOwnership } from '@/lib/dns/verification';
+import { lookupDomain } from '@/lib/dns/rdap';
 import { scoreDomain } from '@/lib/ai/scoring';
+import { sendListingLiveEmail } from '@/lib/email';
 import type { Listing } from '@/types/database';
 
 export async function POST(request: NextRequest) {
@@ -65,6 +67,9 @@ export async function POST(request: NextRequest) {
     // AI score the domain
     const score = await scoreDomain(listing.domain_name);
 
+    // Lookup domain info (registrar, expiration, etc.)
+    const domainInfo = await lookupDomain(listing.domain_name);
+
     // Update listing
     const { error: updateError } = await supabase
       .from('listings')
@@ -76,6 +81,9 @@ export async function POST(request: NextRequest) {
         ai_score: score.score,
         ai_tier: score.tier,
         ai_scored_at: new Date().toISOString(),
+        registrar: domainInfo.registrar,
+        expiration_date: domainInfo.expirationDate?.toISOString() || null,
+        domain_age_months: domainInfo.ageInMonths,
       } as any)
       .eq('id', listingId);
 
@@ -83,6 +91,11 @@ export async function POST(request: NextRequest) {
       console.error('Failed to update listing:', updateError);
       return NextResponse.json({ error: 'Failed to activate listing' }, { status: 500 });
     }
+
+    // Send listing live email (don't wait)
+    sendListingLiveEmail(user.email!, listing.domain_name).catch((err) =>
+      console.error('Failed to send listing live email:', err)
+    );
 
     return NextResponse.json({
       verified: true,

@@ -11,7 +11,7 @@ const SUPPORTED_TLDS = ['com', 'net', 'org', 'io', 'ai'];
 interface BrowsePageProps {
   searchParams: Promise<{
     tld?: string;
-    sort?: 'relevance' | 'newest' | 'expiring';
+    sort?: 'newest' | 'expiring';
     q?: string;
   }>;
 }
@@ -20,7 +20,7 @@ export default async function BrowsePage({ searchParams }: BrowsePageProps) {
   const params = await searchParams;
   const supabase = await createClient();
 
-  const { tld, sort = 'relevance', q } = params;
+  const { tld, sort = 'newest', q } = params;
 
   let query = supabase
     .from('listings')
@@ -39,12 +39,10 @@ export default async function BrowsePage({ searchParams }: BrowsePageProps) {
   }
 
   // Sort
-  if (sort === 'newest') {
-    query = query.order('listed_at', { ascending: false });
-  } else if (sort === 'expiring') {
+  if (sort === 'expiring') {
     query = query.order('expiration_date', { ascending: true });
   } else {
-    query = query.order('ai_score', { ascending: false, nullsFirst: false });
+    query = query.order('listed_at', { ascending: false });
   }
 
   const { data: listingsData } = await query.limit(100);
@@ -69,7 +67,7 @@ export default async function BrowsePage({ searchParams }: BrowsePageProps) {
               </Badge>
             </Link>
             {SUPPORTED_TLDS.map((t) => (
-              <Link key={t} href={`/browse?tld=${t}${sort !== 'relevance' ? `&sort=${sort}` : ''}${q ? `&q=${q}` : ''}`}>
+              <Link key={t} href={`/browse?tld=${t}${sort !== 'newest' ? `&sort=${sort}` : ''}${q ? `&q=${q}` : ''}`}>
                 <Badge variant={tld === t ? 'info' : 'default'} size="md">
                   .{t}
                 </Badge>
@@ -82,12 +80,7 @@ export default async function BrowsePage({ searchParams }: BrowsePageProps) {
         <div className="flex items-center gap-2 ml-auto">
           <span className="text-sm text-gray-500">Sort:</span>
           <div className="flex gap-2">
-            <Link href={`/browse?${tld ? `tld=${tld}&` : ''}sort=relevance${q ? `&q=${q}` : ''}`}>
-              <Badge variant={sort === 'relevance' ? 'info' : 'default'} size="md">
-                AI Relevance
-              </Badge>
-            </Link>
-            <Link href={`/browse?${tld ? `tld=${tld}&` : ''}sort=newest${q ? `&q=${q}` : ''}`}>
+            <Link href={`/browse?${tld ? `tld=${tld}` : ''}${q ? `${tld ? '&' : ''}q=${q}` : ''}`}>
               <Badge variant={sort === 'newest' ? 'info' : 'default'} size="md">
                 Newest
               </Badge>
@@ -105,7 +98,7 @@ export default async function BrowsePage({ searchParams }: BrowsePageProps) {
       <div className="mb-8">
         <form action="/browse" method="GET">
           {tld && <input type="hidden" name="tld" value={tld} />}
-          {sort !== 'relevance' && <input type="hidden" name="sort" value={sort} />}
+          {sort !== 'newest' && <input type="hidden" name="sort" value={sort} />}
           <div className="relative">
             <input
               type="text"
