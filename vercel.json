@@ -3,6 +3,10 @@
     {
       "path": "/api/cron/auto-release",
       "schedule": "0 */4 * * *"
+    },
+    {
+      "path": "/api/cron/seller-deadline",
+      "schedule": "0 */4 * * *"
     }
   ]
 }
