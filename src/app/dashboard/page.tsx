@@ -2,11 +2,17 @@ import { redirect } from 'next/navigation';
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase/server';
 import { Card, CardHeader, CardTitle, CardContent, Button, Badge } from '@/components/ui';
+import { ListingFilters } from '@/components/domain';
 import type { Listing, Purchase } from '@/types/database';
 
 export const dynamic = 'force-dynamic';
 
-export default async function DashboardPage() {
+interface DashboardPageProps {
+  searchParams: Promise<{ status?: string }>;
+}
+
+export default async function DashboardPage({ searchParams }: DashboardPageProps) {
+  const { status: statusFilter } = await searchParams;
   const supabase = await createClient();
 
   const { data: { user } } = await supabase.auth.getUser();
@@ -34,11 +40,39 @@ export default async function DashboardPage() {
   const purchases = (purchasesData || []) as Purchase[];
 
   const activeListings = listings.filter(l => l.status === 'active');
+  const pendingPayment = listings.filter(l => l.status === 'pending_payment');
   const pendingVerification = listings.filter(l => l.status === 'pending_verification');
   const soldListings = listings.filter(l => l.status === 'sold');
   const pendingTransfers = purchases.filter(p => p.transfer_status === 'pending');
 
+  // Sort listings: pending first (payment, then verification), then active, then others
+  const statusPriority: Record<string, number> = {
+    pending_payment: 0,
+    pending_verification: 1,
+    active: 2,
+    sold: 3,
+    paused: 4,
+    expired: 5,
+    removed: 6,
+  };
+  const sortedListings = [...listings].sort((a, b) =>
+    (statusPriority[a.status] ?? 99) - (statusPriority[b.status] ?? 99)
+  );
+
+  // Filter listings based on URL param
+  const filteredListings = statusFilter && statusFilter !== 'all'
+    ? sortedListings.filter(l => l.status === statusFilter)
+    : sortedListings;
+
   const totalEarnings = soldListings.length * 9583; // $95.83 per sale in cents
+
+  const filterCounts = {
+    all: listings.length,
+    pending_payment: pendingPayment.length,
+    pending_verification: pendingVerification.length,
+    active: activeListings.length,
+    sold: soldListings.length,
+  };
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -53,11 +87,17 @@ export default async function DashboardPage() {
       </div>
 
       {/* Stats Grid */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+      <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8">
         <Card>
           <CardContent>
             <p className="text-sm text-gray-500">Active Listings</p>
             <p className="text-3xl font-bold text-gray-900">{activeListings.length}</p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent>
+            <p className="text-sm text-gray-500">Pending Payment</p>
+            <p className="text-3xl font-bold text-orange-600">{pendingPayment.length}</p>
           </CardContent>
         </Card>
         <Card>
@@ -93,20 +133,17 @@ export default async function DashboardPage() {
         </div>
       )}
 
-      {/* Recent Listings */}
+      {/* Listings */}
       <Card>
         <CardHeader>
-          <div className="flex items-center justify-between">
-            <CardTitle>Your Listings</CardTitle>
-            <Link href="/listings">
-              <Button variant="ghost" size="sm">View All</Button>
-            </Link>
-          </div>
+          <CardTitle>Your Listings</CardTitle>
         </CardHeader>
         <CardContent>
-          {listings && listings.length > 0 ? (
+          <ListingFilters counts={filterCounts} />
+
+          {filteredListings && filteredListings.length > 0 ? (
             <div className="divide-y divide-gray-200">
-              {listings.slice(0, 10).map((listing) => (
+              {filteredListings.map((listing) => (
                 <div key={listing.id} className="py-4 flex items-center justify-between">
                   <div>
                     <p className="font-medium text-gray-900">{listing.domain_name}</p>
@@ -123,11 +160,18 @@ export default async function DashboardPage() {
                           ? 'info'
                           : listing.status === 'pending_verification'
                           ? 'warning'
+                          : listing.status === 'pending_payment'
+                          ? 'danger'
                           : 'default'
                       }
                     >
-                      {listing.status.replace('_', ' ')}
+                      {listing.status.replace(/_/g, ' ')}
                     </Badge>
+                    {listing.status === 'pending_payment' && (
+                      <Link href={`/listings/${listing.id}/pay`}>
+                        <Button variant="outline" size="sm">Pay Now</Button>
+                      </Link>
+                    )}
                     {listing.status === 'pending_verification' && (
                       <Link href={`/listings/${listing.id}/verify`}>
                         <Button variant="outline" size="sm">Verify</Button>

@@ -113,11 +113,11 @@ export function isEligibleForListing(domainInfo: DomainInfo): {
 } {
   const now = new Date();
 
-  // Check domain age (minimum 12 months)
-  if (domainInfo.ageInMonths !== null && domainInfo.ageInMonths < 12) {
+  // Check domain age (minimum 24 months)
+  if (domainInfo.ageInMonths !== null && domainInfo.ageInMonths < 24) {
     return {
       eligible: false,
-      reason: `Domain must be at least 12 months old. Current age: ${domainInfo.ageInMonths} months.`,
+      reason: `Domain must be at least 24 months old. Current age: ${domainInfo.ageInMonths} months.`,
     };
   }
 

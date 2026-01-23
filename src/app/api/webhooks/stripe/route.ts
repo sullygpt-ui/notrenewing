@@ -3,6 +3,7 @@ import { headers } from 'next/headers';
 import Stripe from 'stripe';
 import { stripe } from '@/lib/stripe';
 import { createServiceClient } from '@/lib/supabase/server';
+import { sendPurchaseConfirmationEmail, sendDomainSoldEmail, sendVerificationEmail } from '@/lib/email';
 
 export async function POST(request: NextRequest) {
   const body = await request.text();
@@ -61,6 +62,13 @@ export async function POST(request: NextRequest) {
             throw purchaseError;
           }
 
+          // Fetch listing with seller info for emails
+          const { data: listingData } = await supabase
+            .from('listings')
+            .select('domain_name, seller_id')
+            .eq('id', listingId)
+            .single();
+
           // Update listing status to sold
           const { error: listingError } = await supabase
             .from('listings')
@@ -72,26 +80,70 @@ export async function POST(request: NextRequest) {
             throw listingError;
           }
 
-          // TODO: Send email notifications to buyer and seller
+          // Get seller email from auth.users
+          if (listingData && buyerEmail) {
+            const { data: sellerData } = await supabase.auth.admin.getUserById(
+              listingData.seller_id
+            );
+
+            const sellerEmail = sellerData?.user?.email;
+            const domainName = listingData.domain_name;
+
+            // Send emails (don't wait, fire and forget)
+            if (sellerEmail) {
+              sendDomainSoldEmail(sellerEmail, domainName, buyerEmail, sellerPayout).catch(
+                (err) => console.error('Failed to send sold email to seller:', err)
+              );
+            }
+
+            sendPurchaseConfirmationEmail(buyerEmail, domainName, sellerEmail || 'seller').catch(
+              (err) => console.error('Failed to send purchase confirmation to buyer:', err)
+            );
+          }
         }
 
         if (session.metadata?.type === 'listing_fee') {
           // Handle listing fee payment
           const sellerId = session.metadata.seller_id;
-          const domainCount = parseInt(session.metadata.domain_count || '0');
+          const listingIds = JSON.parse(session.metadata.listing_ids || '[]');
 
-          // Update listing fee record
-          const { error } = await supabase
-            .from('listing_fees')
-            .update({ status: 'paid' })
-            .eq('stripe_payment_intent_id', session.payment_intent);
+          if (listingIds.length > 0) {
+            // Update listings from pending_payment to pending_verification
+            const { error: updateError } = await supabase
+              .from('listings')
+              .update({ status: 'pending_verification' })
+              .in('id', listingIds)
+              .eq('seller_id', sellerId);
 
-          if (error) {
-            console.error('Failed to update listing fee:', error);
+            if (updateError) {
+              console.error('Failed to update listings:', updateError);
+              throw updateError;
+            }
+
+            // Fetch listings with tokens to send verification emails
+            const { data: listings } = await supabase
+              .from('listings')
+              .select('id, domain_name, verification_token')
+              .in('id', listingIds);
+
+            // Get seller email
+            const { data: sellerData } = await supabase.auth.admin.getUserById(sellerId);
+            const sellerEmail = sellerData?.user?.email;
+
+            // Send verification emails for each domain
+            if (sellerEmail && listings) {
+              for (const listing of listings) {
+                sendVerificationEmail(
+                  sellerEmail,
+                  listing.domain_name,
+                  listing.verification_token,
+                  listing.id
+                ).catch((err) =>
+                  console.error(`Failed to send verification email for ${listing.domain_name}:`, err)
+                );
+              }
+            }
           }
-
-          // Activate the pending listings
-          // This would require tracking which listings belong to which fee
         }
 
         break;

@@ -2,11 +2,17 @@ import { redirect } from 'next/navigation';
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase/server';
 import { Card, CardHeader, CardTitle, CardContent, Button, Badge } from '@/components/ui';
+import { ListingFilters } from '@/components/domain';
 import type { Listing } from '@/types/database';
 
 export const dynamic = 'force-dynamic';
 
-export default async function ListingsPage() {
+interface ListingsPageProps {
+  searchParams: Promise<{ status?: string }>;
+}
+
+export default async function ListingsPage({ searchParams }: ListingsPageProps) {
+  const { status: statusFilter } = await searchParams;
   const supabase = await createClient();
 
   const { data: { user } } = await supabase.auth.getUser();
@@ -20,7 +26,35 @@ export default async function ListingsPage() {
     .eq('seller_id', user.id)
     .order('created_at', { ascending: false });
 
-  const listings = (listingsData || []) as Listing[];
+  const listingsRaw = (listingsData || []) as Listing[];
+
+  // Sort listings: pending first (payment, then verification), then active, then others
+  const statusPriority: Record<string, number> = {
+    pending_payment: 0,
+    pending_verification: 1,
+    active: 2,
+    sold: 3,
+    paused: 4,
+    expired: 5,
+    removed: 6,
+  };
+  const sortedListings = [...listingsRaw].sort((a, b) =>
+    (statusPriority[a.status] ?? 99) - (statusPriority[b.status] ?? 99)
+  );
+
+  // Filter based on URL param
+  const listings = statusFilter && statusFilter !== 'all'
+    ? sortedListings.filter(l => l.status === statusFilter)
+    : sortedListings;
+
+  // Counts for filter tabs
+  const filterCounts = {
+    all: listingsRaw.length,
+    pending_payment: listingsRaw.filter(l => l.status === 'pending_payment').length,
+    pending_verification: listingsRaw.filter(l => l.status === 'pending_verification').length,
+    active: listingsRaw.filter(l => l.status === 'active').length,
+    sold: listingsRaw.filter(l => l.status === 'sold').length,
+  };
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -30,6 +64,8 @@ export default async function ListingsPage() {
         return 'info';
       case 'pending_verification':
         return 'warning';
+      case 'pending_payment':
+        return 'danger';
       case 'paused':
         return 'default';
       case 'expired':
@@ -52,11 +88,15 @@ export default async function ListingsPage() {
         </Link>
       </div>
 
+      <ListingFilters counts={filterCounts} basePath="/listings" />
+
       {listings.length === 0 ? (
         <Card>
           <CardContent>
             <div className="text-center py-12">
-              <p className="text-gray-500 mb-4">No domains listed yet</p>
+              <p className="text-gray-500 mb-4">
+                {statusFilter ? `No ${statusFilter.replace(/_/g, ' ')} listings` : 'No domains listed yet'}
+              </p>
               <Link href="/submit">
                 <Button>Submit Your First Domain</Button>
               </Link>
@@ -90,8 +130,14 @@ export default async function ListingsPage() {
 
                 <div className="flex items-center gap-3">
                   <Badge variant={getStatusColor(listing.status) as any}>
-                    {listing.status.replace('_', ' ')}
+                    {listing.status.replace(/_/g, ' ')}
                   </Badge>
+
+                  {listing.status === 'pending_payment' && (
+                    <Link href={`/listings/${listing.id}/pay`}>
+                      <Button variant="outline" size="sm">Pay Now</Button>
+                    </Link>
+                  )}
 
                   {listing.status === 'pending_verification' && (
                     <Link href={`/listings/${listing.id}/verify`}>

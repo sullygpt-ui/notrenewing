@@ -7,3 +7,5 @@ export type { InputProps } from './input';
 export { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from './card';
 
 export { Badge } from './badge';
+
+export { SearchBar } from './search-bar';

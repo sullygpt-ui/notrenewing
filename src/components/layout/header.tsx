@@ -3,11 +3,12 @@
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { createClient } from '@/lib/supabase/client';
-import { Button } from '@/components/ui';
+import { Button, SearchBar } from '@/components/ui';
 import type { User } from '@supabase/supabase-js';
 
 export function Header() {
   const [user, setUser] = useState<User | null>(null);
+  const [isAdmin, setIsAdmin] = useState(false);
   const [loading, setLoading] = useState(true);
   const supabase = createClient();
 
@@ -15,6 +16,16 @@ export function Header() {
     const getUser = async () => {
       const { data: { user } } = await supabase.auth.getUser();
       setUser(user);
+
+      if (user) {
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('role')
+          .eq('id', user.id)
+          .single();
+        setIsAdmin(profile?.role === 'admin');
+      }
+
       setLoading(false);
     };
 
@@ -22,6 +33,7 @@ export function Header() {
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setUser(session?.user ?? null);
+      if (!session?.user) setIsAdmin(false);
     });
 
     return () => subscription.unsubscribe();
@@ -55,11 +67,22 @@ export function Header() {
             </nav>
           </div>
 
+          <div className="hidden md:block flex-1 max-w-md mx-8">
+            <SearchBar size="sm" placeholder="Search domains..." />
+          </div>
+
           <div className="flex items-center gap-4">
             {loading ? (
               <div className="h-9 w-24 bg-gray-100 animate-pulse rounded-lg" />
             ) : user ? (
               <>
+                {isAdmin && (
+                  <Link href="/admin">
+                    <Button variant="ghost" size="sm" className="text-purple-600 hover:text-purple-700">
+                      Admin
+                    </Button>
+                  </Link>
+                )}
                 <Link href="/dashboard">
                   <Button variant="ghost" size="sm">
                     Dashboard

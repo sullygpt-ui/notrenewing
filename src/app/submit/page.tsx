@@ -122,29 +122,47 @@ export default function SubmitPage() {
 
     const validDomains = validations.filter((v) => v.valid);
 
-    // Create listings with pending_verification status
-    const listings = validDomains.map((v) => ({
-      seller_id: user.id,
-      domain_name: v.domain,
-      tld: v.tld,
-      status: 'pending_verification' as const,
-      verification_token: crypto.randomUUID().split('-')[0].toUpperCase(),
-    }));
+    try {
+      // Step 1: Create listings with pending_payment status
+      const submitResponse = await fetch('/api/domains/submit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          domains: validDomains.map((v) => ({ domain: v.domain, tld: v.tld })),
+        }),
+      });
 
-    const { data: createdListings, error: insertError } = await supabase
-      .from('listings')
-      .insert(listings as any)
-      .select();
+      const submitData = await submitResponse.json();
 
-    if (insertError) {
-      setError(insertError.message);
+      if (!submitResponse.ok) {
+        setError(submitData.error || 'Failed to submit domains');
+        setLoading(false);
+        return;
+      }
+
+      // Step 2: Create Stripe checkout session for listing fee
+      const paymentResponse = await fetch('/api/payments/listing-fee', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          listingIds: submitData.listingIds,
+        }),
+      });
+
+      const paymentData = await paymentResponse.json();
+
+      if (!paymentResponse.ok) {
+        setError(paymentData.error || 'Failed to create payment session');
+        setLoading(false);
+        return;
+      }
+
+      // Redirect to Stripe checkout
+      window.location.href = paymentData.url;
+    } catch (err) {
+      setError('Failed to submit domains. Please try again.');
       setLoading(false);
-      return;
     }
-
-    // TODO: Redirect to Stripe for $1/domain payment
-    // For now, redirect to dashboard with success message
-    router.push('/dashboard?submitted=' + validDomains.length);
   };
 
   return (
@@ -155,28 +173,76 @@ export default function SubmitPage() {
       </div>
 
       {step === 'input' && (
-        <Card>
-          <CardHeader>
-            <CardTitle>Enter Your Domains</CardTitle>
-            <CardDescription>
-              Enter one domain per line, or separate with commas. Maximum 100 domains per submission.
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            {error && (
-              <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-600">
-                {error}
-              </div>
-            )}
+        <>
+          {/* Requirements & Instructions */}
+          <Card className="mb-6 border-blue-200 bg-blue-50">
+            <CardContent className="pt-6">
+              <h3 className="font-semibold text-blue-900 mb-3">Before You Submit</h3>
 
-            <div className="mb-4">
-              <p className="text-sm text-gray-500 mb-2">Supported TLDs:</p>
-              <div className="flex flex-wrap gap-2">
-                {SUPPORTED_TLDS.map((tld) => (
-                  <Badge key={tld} variant="default">.{tld}</Badge>
-                ))}
+              <div className="space-y-4 text-sm text-blue-800">
+                <div>
+                  <h4 className="font-medium mb-1">Domain Requirements</h4>
+                  <ul className="list-disc list-inside space-y-1 text-blue-700">
+                    <li>Domain must be <strong>at least 24 months old</strong></li>
+                    <li>Domain must expire <strong>within the next 12 months</strong></li>
+                    <li>Supported extensions: .com, .net, .org, .io, .ai (more coming soon)</li>
+                  </ul>
+                </div>
+
+                <div>
+                  <h4 className="font-medium mb-1">Ownership Verification</h4>
+                  <p className="text-blue-700 mb-2">
+                    After submitting, you&apos;ll need to verify ownership by adding a DNS TXT record:
+                  </p>
+                  <div className="bg-blue-100 rounded p-3 font-mono text-xs">
+                    <p><span className="text-blue-600">Host:</span> _notrenewing.yourdomain.com</p>
+                    <p><span className="text-blue-600">Type:</span> TXT</p>
+                    <p><span className="text-blue-600">Value:</span> notrenewing-verify=YOUR_TOKEN</p>
+                  </div>
+                  <p className="text-blue-700 mt-2 text-xs">
+                    You&apos;ll receive a unique token after payment. DNS changes typically propagate within minutes but can take up to 48 hours.
+                  </p>
+                </div>
+
+                <div>
+                  <h4 className="font-medium mb-1">Listing Duration</h4>
+                  <p className="text-blue-700">
+                    Each listing is active for <strong>30 days</strong>. If your domain doesn&apos;t sell, you can relist it for an additional $1.
+                  </p>
+                </div>
+
+                <div>
+                  <h4 className="font-medium mb-1">Pricing</h4>
+                  <p className="text-blue-700">
+                    <strong>$1 listing fee</strong> per domain (non-refundable). All domains sell for a fixed <strong>$99</strong>.
+                  </p>
+                </div>
               </div>
-            </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>Enter Your Domains</CardTitle>
+              <CardDescription>
+                Enter one domain per line, or separate with commas. Maximum 100 domains per submission.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              {error && (
+                <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-600">
+                  {error}
+                </div>
+              )}
+
+              <div className="mb-4">
+                <p className="text-sm text-gray-500 mb-2">Supported TLDs:</p>
+                <div className="flex flex-wrap gap-2">
+                  {SUPPORTED_TLDS.map((tld) => (
+                    <Badge key={tld} variant="default">.{tld}</Badge>
+                  ))}
+                </div>
+              </div>
 
             <textarea
               className="w-full h-48 px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
@@ -192,6 +258,7 @@ export default function SubmitPage() {
             </div>
           </CardContent>
         </Card>
+        </>
       )}
 
       {step === 'review' && (
