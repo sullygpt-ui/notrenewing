@@ -1,10 +1,14 @@
 import { notFound } from 'next/navigation';
+import { unstable_noStore as noStore } from 'next/cache';
 import { createServiceClient } from '@/lib/supabase/server';
 import { FAQAccordion } from './faq-accordion';
 
 export const dynamic = 'force-dynamic';
+export const fetchCache = 'force-no-store';
+export const revalidate = 0;
 
 export async function generateMetadata() {
+  noStore();
   const supabase = await createServiceClient();
   const { data: page } = await supabase
     .from('pages')
@@ -19,6 +23,7 @@ export async function generateMetadata() {
 }
 
 export default async function FAQPage() {
+  noStore();
   const supabase = await createServiceClient();
 
   const { data: page, error } = await supabase
