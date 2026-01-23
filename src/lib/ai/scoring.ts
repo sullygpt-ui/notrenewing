@@ -56,6 +56,7 @@ export async function scoreDomain(domainName: string): Promise<DomainScore> {
     const message = await anthropic.messages.create({
       model: 'claude-3-haiku-20240307',
       max_tokens: 256,
+      temperature: 0, // Deterministic output for consistent scoring
       messages: [
         {
           role: 'user',
