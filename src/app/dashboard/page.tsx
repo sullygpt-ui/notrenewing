@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { createClient } from '@/lib/supabase/server';
 import { Card, CardHeader, CardTitle, CardContent, Button, Badge } from '@/components/ui';
 import { ListingFilters } from '@/components/domain';
-import { StripeConnectCard } from '@/components/dashboard';
+import { PayoutSettings } from '@/components/dashboard';
 import type { Listing, Purchase } from '@/types/database';
 
 export const dynamic = 'force-dynamic';
@@ -121,9 +121,9 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
         </Card>
       </div>
 
-      {/* Stripe Connect */}
+      {/* Payout Settings */}
       <div className="mb-8">
-        <StripeConnectCard />
+        <PayoutSettings />
       </div>
 
       {/* Pending Transfers Alert */}
