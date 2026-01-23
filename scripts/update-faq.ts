@@ -49,7 +49,7 @@ const newContent = `<h3>For Buyers</h3>
 <p>The $1 non-refundable listing fee helps prevent spam and ensures serious sellers. It covers 30 days of listing.</p>
 
 <h4>What is the seller payout amount?</h4>
-<p>Sellers receive $99 per sale minus any Stripe fees when we accept payment from the buyer and any Stripe fee when we provide you with the payout. Payouts are sent via Stripe.</p>
+<p>Sellers receive $99 per sale minus payment processing fees. When we receive payment from the buyer, standard Stripe fees apply. When we send your payout, any applicable Stripe or PayPal fees are deducted. You can choose to receive payouts via Stripe (direct to bank) or PayPal in your dashboard settings.</p>
 
 <h3>Verification & Transfer</h3>
 <h4>How does domain verification work?</h4>
