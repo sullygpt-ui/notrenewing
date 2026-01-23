@@ -4,9 +4,16 @@ import { verifyDomainOwnership } from '@/lib/dns/verification';
 import { lookupDomain } from '@/lib/dns/rdap';
 import { scoreDomain } from '@/lib/ai/scoring';
 import { sendListingLiveEmail } from '@/lib/email';
+import { checkRateLimit } from '@/lib/api-utils';
 import type { Listing } from '@/types/database';
 
 export async function POST(request: NextRequest) {
+  // Rate limit: 20 verification attempts per minute
+  const rateLimitCheck = checkRateLimit(request, 'verify', { windowMs: 60000, maxRequests: 20 });
+  if (!rateLimitCheck.allowed) {
+    return rateLimitCheck.response;
+  }
+
   try {
     const body = await request.json();
     const { listingId } = body;

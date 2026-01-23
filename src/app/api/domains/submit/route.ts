@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
+import { checkRateLimit } from '@/lib/api-utils';
 
 interface DomainSubmission {
   domain: string;
@@ -7,6 +8,12 @@ interface DomainSubmission {
 }
 
 export async function POST(request: NextRequest) {
+  // Rate limit: 5 submissions per hour
+  const rateLimitCheck = checkRateLimit(request, 'submit', { windowMs: 3600000, maxRequests: 5 });
+  if (!rateLimitCheck.allowed) {
+    return rateLimitCheck.response;
+  }
+
   try {
     const body = await request.json();
     const { domains } = body as { domains: DomainSubmission[] };

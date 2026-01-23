@@ -1,5 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient, createServiceClient } from '@/lib/supabase/server';
+import Stripe from 'stripe';
+
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
+  apiVersion: '2025-04-30.basil',
+});
 
 export async function POST(request: NextRequest) {
   try {
@@ -67,25 +72,60 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Failed to resolve dispute' }, { status: 500 });
     }
 
-    // If buyer was refunded, reduce seller reliability score
-    if (outcome === 'buyer_refunded' && purchase.listing?.seller_id) {
-      const { data: sellerProfile } = await serviceClient
-        .from('profiles')
-        .select('reliability_score')
-        .eq('id', purchase.listing.seller_id)
-        .single();
-
-      if (sellerProfile) {
-        const newScore = Math.max(0, (sellerProfile.reliability_score || 100) - 10);
+    // Process refund via Stripe if buyer_refunded
+    if (outcome === 'buyer_refunded' && purchase.stripe_payment_intent_id) {
+      try {
+        await stripe.refunds.create({
+          payment_intent: purchase.stripe_payment_intent_id,
+          reason: 'requested_by_customer',
+        });
+      } catch (stripeError: any) {
+        console.error('Stripe refund error:', stripeError);
+        // Revert the database update
         await serviceClient
+          .from('purchases')
+          .update({
+            dispute_outcome: null,
+            dispute_resolved_at: null,
+            transfer_status: 'disputed',
+          })
+          .eq('id', purchaseId);
+        return NextResponse.json({ error: 'Stripe refund failed: ' + stripeError.message }, { status: 500 });
+      }
+
+      // Reduce seller reliability score
+      if (purchase.listing?.seller_id) {
+        const { data: sellerProfile } = await serviceClient
           .from('profiles')
-          .update({ reliability_score: newScore })
-          .eq('id', purchase.listing.seller_id);
+          .select('reliability_score')
+          .eq('id', purchase.listing.seller_id)
+          .single();
+
+        if (sellerProfile) {
+          const newScore = Math.max(0, (sellerProfile.reliability_score || 100) - 10);
+          await serviceClient
+            .from('profiles')
+            .update({ reliability_score: newScore })
+            .eq('id', purchase.listing.seller_id);
+        }
+      }
+
+      // Re-activate the listing so it can be sold again
+      if (purchase.listing_id) {
+        await serviceClient
+          .from('listings')
+          .update({ status: 'active' })
+          .eq('id', purchase.listing_id);
       }
     }
 
-    // TODO: Process actual refund via Stripe if buyer_refunded
-    // TODO: Process payout to seller if seller_paid
+    // If seller_paid, update listing to sold status
+    if (outcome === 'seller_paid' && purchase.listing_id) {
+      await serviceClient
+        .from('listings')
+        .update({ status: 'sold' })
+        .eq('id', purchase.listing_id);
+    }
 
     return NextResponse.json({ success: true });
   } catch (error) {
