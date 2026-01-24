@@ -9,3 +9,5 @@ export { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter }
 export { Badge } from './badge';
 
 export { SearchBar } from './search-bar';
+
+export { NewsletterForm } from './newsletter-form';

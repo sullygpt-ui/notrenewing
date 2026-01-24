@@ -10,6 +10,7 @@ export default function SignupPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [subscribeNewsletter, setSubscribeNewsletter] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [emailSent, setEmailSent] = useState(false);
@@ -42,6 +43,17 @@ export default function SignupPage() {
       setError(error.message);
       setLoading(false);
       return;
+    }
+
+    // Subscribe to newsletter if opted in
+    if (subscribeNewsletter) {
+      fetch('/api/newsletter/subscribe', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, source: 'signup' }),
+      }).catch(() => {
+        // Silently fail - newsletter subscription is optional
+      });
     }
 
     setEmailSent(true);
@@ -124,6 +136,17 @@ export default function SignupPage() {
               onChange={(e) => setConfirmPassword(e.target.value)}
               required
             />
+            <label className="flex items-start gap-3 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={subscribeNewsletter}
+                onChange={(e) => setSubscribeNewsletter(e.target.checked)}
+                className="mt-1 h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-500"
+              />
+              <span className="text-sm text-gray-600">
+                Get notified of our top picks directly to your inbox.
+              </span>
+            </label>
             <Button type="submit" className="w-full" isLoading={loading}>
               Create Account
             </Button>

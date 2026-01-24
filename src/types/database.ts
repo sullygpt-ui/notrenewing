@@ -97,6 +97,14 @@ export interface DomainEngagement {
   created_at: string;
 }
 
+export interface NewsletterSubscriber {
+  id: string;
+  email: string;
+  source: string | null;
+  subscribed_at: string;
+  unsubscribed_at: string | null;
+}
+
 export interface Database {
   public: {
     Tables: {
@@ -129,6 +137,11 @@ export interface Database {
         Row: DomainEngagement;
         Insert: Omit<DomainEngagement, 'id' | 'created_at'> & { id?: string; created_at?: string };
         Update: Partial<DomainEngagement>;
+      };
+      newsletter_subscribers: {
+        Row: NewsletterSubscriber;
+        Insert: Omit<NewsletterSubscriber, 'id' | 'subscribed_at'> & { id?: string; subscribed_at?: string };
+        Update: Partial<NewsletterSubscriber>;
       };
     };
   };

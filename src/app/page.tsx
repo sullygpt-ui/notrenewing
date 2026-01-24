@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase/server';
 import { DomainGrid, HeroSearch } from '@/components/domain';
-import { Button, Badge } from '@/components/ui';
+import { Button, Badge, NewsletterForm } from '@/components/ui';
 import type { Listing } from '@/types/database';
 
 export const dynamic = 'force-dynamic';
@@ -171,6 +171,16 @@ export default async function HomePage() {
               </p>
             </div>
           </div>
+        </div>
+      </section>
+
+      {/* Newsletter Section */}
+      <section className="py-12 md:py-16 bg-gray-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h2 className="text-2xl font-bold text-gray-900 text-center mb-4">
+            Stay Updated
+          </h2>
+          <NewsletterForm />
         </div>
       </section>
 
