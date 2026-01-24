@@ -66,10 +66,18 @@ export function Footer() {
             </ul>
           </div>
         </div>
-        <div className="mt-8 pt-8 border-t border-gray-200">
+        <div className="mt-8 pt-8 border-t border-gray-200 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <p className="text-sm text-gray-500">
             &copy; {new Date().getFullYear()} NotRenewing. All rights reserved.
           </p>
+          <a
+            href="https://sullysblog.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-sm text-gray-500 hover:text-gray-900"
+          >
+            SullysBlog.com
+          </a>
         </div>
       </div>
     </footer>
