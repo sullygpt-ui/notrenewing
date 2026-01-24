@@ -7,6 +7,14 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent, Button, Inpu
 
 const SUPPORTED_TLDS = ['com', 'net', 'org', 'io', 'ai'];
 
+// Free listing period ends April 1, 2025
+const FREE_LISTING_END_DATE = new Date('2025-04-01T00:00:00Z');
+const MAX_ACTIVE_LISTINGS = 25;
+
+function isFreeLlistingPeriod(): boolean {
+  return new Date() < FREE_LISTING_END_DATE;
+}
+
 interface DomainValidation {
   domain: string;
   tld: string;
@@ -23,6 +31,10 @@ export default function SubmitPage() {
   const [step, setStep] = useState<'input' | 'review' | 'payment'>('input');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [activeListingCount, setActiveListingCount] = useState(0);
+
+  const isFree = isFreeLlistingPeriod();
+  const availableSlots = MAX_ACTIVE_LISTINGS - activeListingCount;
 
   const parseDomains = (input: string): string[] => {
     return input
@@ -60,6 +72,16 @@ export default function SubmitPage() {
       return;
     }
 
+    // Fetch current active listing count
+    const { count } = await supabase
+      .from('listings')
+      .select('*', { count: 'exact', head: true })
+      .eq('seller_id', user.id)
+      .in('status', ['active', 'pending_verification', 'pending_payment']);
+
+    const currentCount = count || 0;
+    setActiveListingCount(currentCount);
+
     const domainList = parseDomains(domains);
 
     if (domainList.length === 0) {
@@ -70,6 +92,19 @@ export default function SubmitPage() {
 
     if (domainList.length > 100) {
       setError('Maximum 100 domains per submission');
+      setLoading(false);
+      return;
+    }
+
+    const slotsAvailable = MAX_ACTIVE_LISTINGS - currentCount;
+    if (slotsAvailable <= 0) {
+      setError(`You have reached the maximum of ${MAX_ACTIVE_LISTINGS} active listings. Please wait for some to sell or expire before listing more.`);
+      setLoading(false);
+      return;
+    }
+
+    if (domainList.length > slotsAvailable) {
+      setError(`You can only list ${slotsAvailable} more domain${slotsAvailable === 1 ? '' : 's'}. You currently have ${currentCount} active listing${currentCount === 1 ? '' : 's'}.`);
       setLoading(false);
       return;
     }
@@ -123,7 +158,7 @@ export default function SubmitPage() {
     const validDomains = validations.filter((v) => v.valid);
 
     try {
-      // Step 1: Create listings with pending_payment status
+      // Step 1: Create listings
       const submitResponse = await fetch('/api/domains/submit', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -140,7 +175,13 @@ export default function SubmitPage() {
         return;
       }
 
-      // Step 2: Create Stripe checkout session for listing fee
+      // During free listing period, skip payment and go directly to dashboard
+      if (submitData.freeListingPeriod) {
+        router.push(`/dashboard?submitted=success&count=${validDomains.length}`);
+        return;
+      }
+
+      // Step 2: Create Stripe checkout session for listing fee (only after free period)
       const paymentResponse = await fetch('/api/payments/listing-fee', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -200,21 +241,35 @@ export default function SubmitPage() {
                     <p><span className="text-blue-600">Value:</span> notrenewing-verify=YOUR_TOKEN</p>
                   </div>
                   <p className="text-blue-700 mt-2 text-xs">
-                    You&apos;ll receive a unique token after payment. DNS changes typically propagate within minutes but can take up to 48 hours.
+                    You&apos;ll receive a unique token after submitting. DNS changes typically propagate within minutes but can take up to 48 hours.
                   </p>
                 </div>
 
                 <div>
                   <h4 className="font-medium mb-1">Listing Duration</h4>
                   <p className="text-blue-700">
-                    Each listing is active for <strong>30 days</strong>. If your domain doesn&apos;t sell, you can relist it for an additional $1.
+                    Each listing is active for <strong>30 days</strong>. If your domain doesn&apos;t sell, you can relist it.
                   </p>
                 </div>
 
                 <div>
                   <h4 className="font-medium mb-1">Pricing</h4>
+                  {isFree ? (
+                    <p className="text-blue-700">
+                      <strong className="text-green-700">Free listings through March 31st!</strong> Then $1 per listing. All domains sell for a fixed <strong>$99</strong>.
+                    </p>
+                  ) : (
+                    <p className="text-blue-700">
+                      <strong>$1 listing fee</strong> per domain (non-refundable). All domains sell for a fixed <strong>$99</strong>.
+                    </p>
+                  )}
+                </div>
+
+                <div>
+                  <h4 className="font-medium mb-1">Listing Limit</h4>
                   <p className="text-blue-700">
-                    <strong>$1 listing fee</strong> per domain (non-refundable). All domains sell for a fixed <strong>$99</strong>.
+                    Maximum of <strong>{MAX_ACTIVE_LISTINGS} active listings</strong> per account.
+                    {activeListingCount > 0 && ` You currently have ${activeListingCount} listing${activeListingCount === 1 ? '' : 's'}.`}
                   </p>
                 </div>
               </div>
@@ -294,13 +349,22 @@ export default function SubmitPage() {
             {validCount > 0 && (
               <div className="border-t border-gray-200 pt-4">
                 <div className="flex items-center justify-between mb-4">
-                  <span className="text-gray-600">Listing fee ({validCount} domains)</span>
-                  <span className="text-xl font-bold text-gray-900">
-                    ${(totalFee / 100).toFixed(2)}
-                  </span>
+                  <span className="text-gray-600">Listing fee ({validCount} domain{validCount === 1 ? '' : 's'})</span>
+                  {isFree ? (
+                    <span className="text-xl font-bold text-green-600">
+                      FREE
+                    </span>
+                  ) : (
+                    <span className="text-xl font-bold text-gray-900">
+                      ${(totalFee / 100).toFixed(2)}
+                    </span>
+                  )}
                 </div>
                 <p className="text-xs text-gray-500 mb-4">
-                  $1 per domain. Non-refundable. You'll need to verify ownership via DNS TXT record.
+                  {isFree
+                    ? "Free through March 31st! You'll need to verify ownership via DNS TXT record."
+                    : "$1 per domain. Non-refundable. You'll need to verify ownership via DNS TXT record."
+                  }
                 </p>
               </div>
             )}
@@ -311,7 +375,7 @@ export default function SubmitPage() {
               </Button>
               {validCount > 0 && (
                 <Button onClick={handleSubmit} isLoading={loading}>
-                  Pay ${(totalFee / 100).toFixed(2)} & Submit
+                  {isFree ? 'Submit Domains' : `Pay $${(totalFee / 100).toFixed(2)} & Submit`}
                 </Button>
               )}
             </div>

@@ -7,6 +7,14 @@ interface DomainSubmission {
   tld: string;
 }
 
+// Free listing period ends April 1, 2025
+const FREE_LISTING_END_DATE = new Date('2025-04-01T00:00:00Z');
+const MAX_ACTIVE_LISTINGS_PER_USER = 25;
+
+function isFreeLlistingPeriod(): boolean {
+  return new Date() < FREE_LISTING_END_DATE;
+}
+
 export async function POST(request: NextRequest) {
   // Rate limit: 5 submissions per hour
   const rateLimitCheck = checkRateLimit(request, 'submit', { windowMs: 3600000, maxRequests: 5 });
@@ -34,12 +42,39 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    // Create listings with pending_payment status (emails sent after payment)
+    // Check active listing limit per user
+    const { count: activeListingCount } = await supabase
+      .from('listings')
+      .select('*', { count: 'exact', head: true })
+      .eq('seller_id', user.id)
+      .in('status', ['active', 'pending_verification', 'pending_payment']);
+
+    const currentActiveCount = activeListingCount || 0;
+    const availableSlots = MAX_ACTIVE_LISTINGS_PER_USER - currentActiveCount;
+
+    if (availableSlots <= 0) {
+      return NextResponse.json({
+        error: `You have reached the maximum of ${MAX_ACTIVE_LISTINGS_PER_USER} active listings. Please wait for some to sell or expire before listing more.`
+      }, { status: 400 });
+    }
+
+    if (domains.length > availableSlots) {
+      return NextResponse.json({
+        error: `You can only list ${availableSlots} more domain${availableSlots === 1 ? '' : 's'}. You currently have ${currentActiveCount} active listing${currentActiveCount === 1 ? '' : 's'}.`
+      }, { status: 400 });
+    }
+
+    const isFree = isFreeLlistingPeriod();
+
+    // During free period, skip payment and go directly to pending_verification
+    const initialStatus = isFree ? 'pending_verification' : 'pending_payment';
+
+    // Create listings
     const listings = domains.map((d) => ({
       seller_id: user.id,
       domain_name: d.domain,
       tld: d.tld,
-      status: 'pending_payment' as const,
+      status: initialStatus as 'pending_payment' | 'pending_verification',
       verification_token: crypto.randomUUID().split('-')[0].toUpperCase(),
     }));
 
@@ -53,11 +88,12 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: insertError.message }, { status: 500 });
     }
 
-    // Return listing IDs for payment - emails will be sent after payment succeeds
+    // Return listing IDs - during free period, no payment needed
     return NextResponse.json({
       success: true,
       count: createdListings?.length || 0,
       listingIds: (createdListings || []).map((l: any) => l.id),
+      freeListingPeriod: isFree,
     });
   } catch (error) {
     console.error('Submission error:', error);
