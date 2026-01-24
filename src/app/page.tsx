@@ -45,11 +45,11 @@ export default async function HomePage() {
 
   return (
     <div>
-      {/* Free Listing Promotion Banner */}
+      {/* Free Listing Banner */}
       <div className="bg-yellow-400 py-3">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <p className="text-lg font-bold text-gray-900">
-            Free listings through March 31st, then $1 per listing
+            Free to List Your Names!
           </p>
         </div>
       </div>
@@ -145,7 +145,7 @@ export default async function HomePage() {
                 Sellers List
               </h3>
               <p className="text-gray-600">
-                Domain owners list domains they don&apos;t plan to renew. <span className="font-semibold text-green-600">Free through March 31st</span>, then $1 per listing.
+                Domain owners list domains they don&apos;t plan to renew. <span className="font-semibold text-green-600">Free to list</span>. We take $2 from the sale.
               </p>
             </div>
             <div className="text-center">
@@ -191,7 +191,7 @@ export default async function HomePage() {
             Got domains you&apos;re not renewing?
           </h2>
           <p className="text-primary-100 mb-8 max-w-xl mx-auto">
-            Turn your expiring domains into cash. <span className="font-semibold text-yellow-300">List free through March 31st</span>, sell for $99.
+            Turn your expiring domains into cash. <span className="font-semibold text-yellow-300">Free to list</span>, sell for $99.
           </p>
           <Link href="/signup">
             <Button variant="secondary" size="lg">

@@ -7,13 +7,7 @@ interface DomainSubmission {
   tld: string;
 }
 
-// Free listing period ends April 1, 2025
-const FREE_LISTING_END_DATE = new Date('2025-04-01T00:00:00Z');
 const MAX_ACTIVE_LISTINGS_PER_USER = 25;
-
-function isFreeLlistingPeriod(): boolean {
-  return new Date() < FREE_LISTING_END_DATE;
-}
 
 export async function POST(request: NextRequest) {
   // Rate limit: 5 submissions per hour
@@ -64,17 +58,12 @@ export async function POST(request: NextRequest) {
       }, { status: 400 });
     }
 
-    const isFree = isFreeLlistingPeriod();
-
-    // During free period, skip payment and go directly to pending_verification
-    const initialStatus = isFree ? 'pending_verification' : 'pending_payment';
-
-    // Create listings
+    // Create listings - always free, go directly to pending_verification
     const listings = domains.map((d) => ({
       seller_id: user.id,
       domain_name: d.domain,
       tld: d.tld,
-      status: initialStatus as 'pending_payment' | 'pending_verification',
+      status: 'pending_verification' as const,
       verification_token: crypto.randomUUID().split('-')[0].toUpperCase(),
     }));
 
@@ -88,12 +77,11 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: insertError.message }, { status: 500 });
     }
 
-    // Return listing IDs - during free period, no payment needed
+    // Return listing IDs - listings are free
     return NextResponse.json({
       success: true,
       count: createdListings?.length || 0,
       listingIds: (createdListings || []).map((l: any) => l.id),
-      freeListingPeriod: isFree,
     });
   } catch (error) {
     console.error('Submission error:', error);

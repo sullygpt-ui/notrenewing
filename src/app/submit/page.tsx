@@ -6,14 +6,7 @@ import { createClient } from '@/lib/supabase/client';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, Button, Input, Badge } from '@/components/ui';
 
 const SUPPORTED_TLDS = ['com', 'net', 'org', 'io', 'ai'];
-
-// Free listing period ends April 1, 2025
-const FREE_LISTING_END_DATE = new Date('2025-04-01T00:00:00Z');
 const MAX_ACTIVE_LISTINGS = 25;
-
-function isFreeLlistingPeriod(): boolean {
-  return new Date() < FREE_LISTING_END_DATE;
-}
 
 interface DomainValidation {
   domain: string;
@@ -33,7 +26,6 @@ export default function SubmitPage() {
   const [error, setError] = useState<string | null>(null);
   const [activeListingCount, setActiveListingCount] = useState(0);
 
-  const isFree = isFreeLlistingPeriod();
   const availableSlots = MAX_ACTIVE_LISTINGS - activeListingCount;
 
   const parseDomains = (input: string): string[] => {
@@ -143,7 +135,6 @@ export default function SubmitPage() {
   };
 
   const validCount = validations.filter((v) => v.valid).length;
-  const totalFee = validCount * 100; // $1 = 100 cents
 
   const handleSubmit = async () => {
     setLoading(true);
@@ -175,31 +166,8 @@ export default function SubmitPage() {
         return;
       }
 
-      // During free listing period, skip payment and go directly to dashboard
-      if (submitData.freeListingPeriod) {
-        router.push(`/dashboard?submitted=success&count=${validDomains.length}`);
-        return;
-      }
-
-      // Step 2: Create Stripe checkout session for listing fee (only after free period)
-      const paymentResponse = await fetch('/api/payments/listing-fee', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          listingIds: submitData.listingIds,
-        }),
-      });
-
-      const paymentData = await paymentResponse.json();
-
-      if (!paymentResponse.ok) {
-        setError(paymentData.error || 'Failed to create payment session');
-        setLoading(false);
-        return;
-      }
-
-      // Redirect to Stripe checkout
-      window.location.href = paymentData.url;
+      // Redirect to dashboard - listings are free
+      router.push(`/dashboard?submitted=success&count=${validDomains.length}`);
     } catch (err) {
       setError('Failed to submit domains. Please try again.');
       setLoading(false);
@@ -254,15 +222,9 @@ export default function SubmitPage() {
 
                 <div>
                   <h4 className="font-medium mb-1">Pricing</h4>
-                  {isFree ? (
-                    <p className="text-blue-700">
-                      <strong className="text-green-700">Free listings through March 31st!</strong> Then $1 per listing. All domains sell for a fixed <strong>$99</strong>.
-                    </p>
-                  ) : (
-                    <p className="text-blue-700">
-                      <strong>$1 listing fee</strong> per domain (non-refundable). All domains sell for a fixed <strong>$99</strong>.
-                    </p>
-                  )}
+                  <p className="text-blue-700">
+                    <strong className="text-green-700">Free to list!</strong> All domains sell for a fixed <strong>$99</strong>. We deduct <strong>$2</strong> from the sale before transferring to you.
+                  </p>
                 </div>
 
                 <div>
@@ -350,21 +312,12 @@ export default function SubmitPage() {
               <div className="border-t border-gray-200 pt-4">
                 <div className="flex items-center justify-between mb-4">
                   <span className="text-gray-600">Listing fee ({validCount} domain{validCount === 1 ? '' : 's'})</span>
-                  {isFree ? (
-                    <span className="text-xl font-bold text-green-600">
-                      FREE
-                    </span>
-                  ) : (
-                    <span className="text-xl font-bold text-gray-900">
-                      ${(totalFee / 100).toFixed(2)}
-                    </span>
-                  )}
+                  <span className="text-xl font-bold text-green-600">
+                    FREE
+                  </span>
                 </div>
                 <p className="text-xs text-gray-500 mb-4">
-                  {isFree
-                    ? "Free through March 31st! You'll need to verify ownership via DNS TXT record."
-                    : "$1 per domain. Non-refundable. You'll need to verify ownership via DNS TXT record."
-                  }
+                  Free to list! $2 is deducted from the sale. You&apos;ll need to verify ownership via DNS TXT record.
                 </p>
               </div>
             )}
@@ -375,7 +328,7 @@ export default function SubmitPage() {
               </Button>
               {validCount > 0 && (
                 <Button onClick={handleSubmit} isLoading={loading}>
-                  {isFree ? 'Submit Domains' : `Pay $${(totalFee / 100).toFixed(2)} & Submit`}
+                  Submit Domains
                 </Button>
               )}
             </div>
