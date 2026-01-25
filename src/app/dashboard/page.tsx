@@ -100,30 +100,38 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
 
       {/* Stats Grid */}
       <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8">
-        <Card>
-          <CardContent>
-            <p className="text-sm text-gray-500">Active Listings</p>
-            <p className="text-3xl font-bold text-gray-900">{activeListings.length}</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent>
-            <p className="text-sm text-gray-500">Pending Payment</p>
-            <p className="text-3xl font-bold text-orange-600">{pendingPayment.length}</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent>
-            <p className="text-sm text-gray-500">Pending Verification</p>
-            <p className="text-3xl font-bold text-yellow-600">{pendingVerification.length}</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent>
-            <p className="text-sm text-gray-500">Domains Sold</p>
-            <p className="text-3xl font-bold text-green-600">{soldListings.length}</p>
-          </CardContent>
-        </Card>
+        <Link href="/dashboard?status=active">
+          <Card className={`cursor-pointer hover:border-primary-300 hover:shadow-md transition-all ${statusFilter === 'active' ? 'border-primary-500 ring-2 ring-primary-200' : ''}`}>
+            <CardContent>
+              <p className="text-sm text-gray-500">Active Listings</p>
+              <p className="text-3xl font-bold text-gray-900">{activeListings.length}</p>
+            </CardContent>
+          </Card>
+        </Link>
+        <Link href="/dashboard?status=pending_payment">
+          <Card className={`cursor-pointer hover:border-primary-300 hover:shadow-md transition-all ${statusFilter === 'pending_payment' ? 'border-primary-500 ring-2 ring-primary-200' : ''}`}>
+            <CardContent>
+              <p className="text-sm text-gray-500">Pending Payment</p>
+              <p className="text-3xl font-bold text-orange-600">{pendingPayment.length}</p>
+            </CardContent>
+          </Card>
+        </Link>
+        <Link href="/dashboard?status=pending_verification">
+          <Card className={`cursor-pointer hover:border-primary-300 hover:shadow-md transition-all ${statusFilter === 'pending_verification' ? 'border-primary-500 ring-2 ring-primary-200' : ''}`}>
+            <CardContent>
+              <p className="text-sm text-gray-500">Pending Verification</p>
+              <p className="text-3xl font-bold text-yellow-600">{pendingVerification.length}</p>
+            </CardContent>
+          </Card>
+        </Link>
+        <Link href="/dashboard?status=sold">
+          <Card className={`cursor-pointer hover:border-primary-300 hover:shadow-md transition-all ${statusFilter === 'sold' ? 'border-primary-500 ring-2 ring-primary-200' : ''}`}>
+            <CardContent>
+              <p className="text-sm text-gray-500">Domains Sold</p>
+              <p className="text-3xl font-bold text-green-600">{soldListings.length}</p>
+            </CardContent>
+          </Card>
+        </Link>
         <Card>
           <CardContent>
             <p className="text-sm text-gray-500">Total Earnings</p>
