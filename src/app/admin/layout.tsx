@@ -33,6 +33,7 @@ export default async function AdminLayout({
     { href: '/admin/disputes', label: 'Disputes' },
     { href: '/admin/payouts', label: 'Payouts' },
     { href: '/admin/pages', label: 'Pages' },
+    { href: '/admin/feedback', label: 'Feedback' },
   ];
 
   return (
