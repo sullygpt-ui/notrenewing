@@ -39,6 +39,11 @@ export function Footer() {
             <h3 className="text-sm font-semibold text-gray-900 mb-4">Support</h3>
             <ul className="space-y-3">
               <li>
+                <Link href="/about" className="text-sm text-gray-600 hover:text-gray-900">
+                  About
+                </Link>
+              </li>
+              <li>
                 <Link href="/faq" className="text-sm text-gray-600 hover:text-gray-900">
                   FAQ
                 </Link>
