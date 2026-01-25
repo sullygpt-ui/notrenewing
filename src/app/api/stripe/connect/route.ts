@@ -56,9 +56,10 @@ export async function POST(request: NextRequest) {
     });
 
     return NextResponse.json({ url: accountLink.url });
-  } catch (error) {
-    console.error('Stripe Connect error:', error);
-    return NextResponse.json({ error: 'Failed to create Stripe account' }, { status: 500 });
+  } catch (error: any) {
+    console.error('Stripe Connect error:', error?.message || error);
+    const errorMessage = error?.message || 'Failed to create Stripe account';
+    return NextResponse.json({ error: errorMessage }, { status: 500 });
   }
 }
 
