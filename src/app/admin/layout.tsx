@@ -28,6 +28,7 @@ export default async function AdminLayout({
 
   const navItems = [
     { href: '/admin', label: 'Dashboard' },
+    { href: '/admin/analytics', label: 'Analytics' },
     { href: '/admin/domains', label: 'Domains' },
     { href: '/admin/sellers', label: 'Sellers' },
     { href: '/admin/disputes', label: 'Disputes' },
