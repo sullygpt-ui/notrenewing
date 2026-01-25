@@ -66,54 +66,70 @@ export default async function AdminDashboardPage() {
 
       {/* Stats Grid */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-        <Card>
-          <CardContent>
-            <p className="text-sm text-gray-500">Total Listings</p>
-            <p className="text-3xl font-bold text-gray-900">{totalListings || 0}</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent>
-            <p className="text-sm text-gray-500">Active Listings</p>
-            <p className="text-3xl font-bold text-green-600">{activeListings || 0}</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent>
-            <p className="text-sm text-gray-500">Pending Verification</p>
-            <p className="text-3xl font-bold text-yellow-600">{pendingVerification || 0}</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent>
-            <p className="text-sm text-gray-500">Domains Sold</p>
-            <p className="text-3xl font-bold text-blue-600">{soldListings || 0}</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent>
-            <p className="text-sm text-gray-500">Total Sellers</p>
-            <p className="text-3xl font-bold text-gray-900">{totalSellers || 0}</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent>
-            <p className="text-sm text-gray-500">Pending Transfers</p>
-            <p className="text-3xl font-bold text-orange-600">{pendingTransfers || 0}</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent>
-            <p className="text-sm text-gray-500">Open Disputes</p>
-            <p className="text-3xl font-bold text-red-600">{pendingDisputes || 0}</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent>
-            <p className="text-sm text-gray-500">Revenue</p>
-            <p className="text-3xl font-bold text-gray-900">${((soldListings || 0) * 99).toLocaleString()}</p>
-          </CardContent>
-        </Card>
+        <Link href="/admin/domains">
+          <Card className="hover:shadow-md transition-shadow cursor-pointer">
+            <CardContent>
+              <p className="text-sm text-gray-500">Total Listings</p>
+              <p className="text-3xl font-bold text-gray-900">{totalListings || 0}</p>
+            </CardContent>
+          </Card>
+        </Link>
+        <Link href="/admin/domains?status=active">
+          <Card className="hover:shadow-md transition-shadow cursor-pointer">
+            <CardContent>
+              <p className="text-sm text-gray-500">Active Listings</p>
+              <p className="text-3xl font-bold text-green-600">{activeListings || 0}</p>
+            </CardContent>
+          </Card>
+        </Link>
+        <Link href="/admin/domains?status=pending_verification">
+          <Card className="hover:shadow-md transition-shadow cursor-pointer">
+            <CardContent>
+              <p className="text-sm text-gray-500">Pending Verification</p>
+              <p className="text-3xl font-bold text-yellow-600">{pendingVerification || 0}</p>
+            </CardContent>
+          </Card>
+        </Link>
+        <Link href="/admin/domains?status=sold">
+          <Card className="hover:shadow-md transition-shadow cursor-pointer">
+            <CardContent>
+              <p className="text-sm text-gray-500">Domains Sold</p>
+              <p className="text-3xl font-bold text-blue-600">{soldListings || 0}</p>
+            </CardContent>
+          </Card>
+        </Link>
+        <Link href="/admin/sellers">
+          <Card className="hover:shadow-md transition-shadow cursor-pointer">
+            <CardContent>
+              <p className="text-sm text-gray-500">Total Sellers</p>
+              <p className="text-3xl font-bold text-gray-900">{totalSellers || 0}</p>
+            </CardContent>
+          </Card>
+        </Link>
+        <Link href="/admin/payouts?status=pending">
+          <Card className="hover:shadow-md transition-shadow cursor-pointer">
+            <CardContent>
+              <p className="text-sm text-gray-500">Pending Transfers</p>
+              <p className="text-3xl font-bold text-orange-600">{pendingTransfers || 0}</p>
+            </CardContent>
+          </Card>
+        </Link>
+        <Link href="/admin/disputes">
+          <Card className="hover:shadow-md transition-shadow cursor-pointer">
+            <CardContent>
+              <p className="text-sm text-gray-500">Open Disputes</p>
+              <p className="text-3xl font-bold text-red-600">{pendingDisputes || 0}</p>
+            </CardContent>
+          </Card>
+        </Link>
+        <Link href="/admin/payouts">
+          <Card className="hover:shadow-md transition-shadow cursor-pointer">
+            <CardContent>
+              <p className="text-sm text-gray-500">Revenue</p>
+              <p className="text-3xl font-bold text-gray-900">${((soldListings || 0) * 99).toLocaleString()}</p>
+            </CardContent>
+          </Card>
+        </Link>
       </div>
 
       {/* Alerts */}
