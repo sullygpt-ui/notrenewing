@@ -49,7 +49,7 @@ export default async function HomePage() {
       <div className="bg-yellow-400 py-3">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <p className="text-lg font-bold text-gray-900">
-            Free to List Your Names!
+            Now in Beta Testing: Enjoy Free Listings of up to 25 Domains!
           </p>
         </div>
       </div>
