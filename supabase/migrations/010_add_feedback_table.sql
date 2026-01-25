@@ -19,6 +19,6 @@ CREATE POLICY "Admins can view feedback" ON feedback
     EXISTS (
       SELECT 1 FROM profiles
       WHERE profiles.id = auth.uid()
-      AND profiles.is_admin = true
+      AND profiles.role = 'admin'
     )
   );
