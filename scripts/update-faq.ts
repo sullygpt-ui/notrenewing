@@ -34,22 +34,22 @@ const newContent = `<h3>For Buyers</h3>
 
 <h3>For Sellers</h3>
 <h4>How do I list a domain for sale?</h4>
-<p>Sign up for a seller account, submit your domain, pay the $1 listing fee, and verify ownership via DNS TXT record.</p>
+<p>Sign up for a seller account, submit your domain, and verify ownership via DNS TXT record. Listing is free!</p>
 
 <h4>What are the domain requirements?</h4>
 <p>Domains must be at least 24 months old and expiring within 12 months. This ensures quality listings from motivated sellers.</p>
 
 <h4>How long are listings active?</h4>
-<p>Listings are active for 30 days. You can relist for an additional $1 if your domain doesn't sell.</p>
+<p>Listings are active for 30 days. You can relist for free if your domain doesn't sell.</p>
 
 <h4>When do I get paid?</h4>
-<p>Payouts are processed weekly after the buyer confirms receipt of the domain, typically 7-10 days after the sale.</p>
+<p>Payouts are processed within 24 hours after the buyer confirms receipt of the domain.</p>
 
-<h4>What's the listing fee for?</h4>
-<p>The $1 non-refundable listing fee helps prevent spam and ensures serious sellers. It covers 30 days of listing.</p>
+<h4>How much do I receive per sale?</h4>
+<p>Seller payouts are $97 per sale ($99 minus a $2 platform fee). PayPal fees may apply when receiving your payout.</p>
 
-<h4>What is the seller payout amount?</h4>
-<p>Sellers receive $99 per sale minus payment processing fees. When we receive payment from the buyer, standard Stripe fees apply. When we send your payout, any applicable Stripe or PayPal fees are deducted. You can choose to receive payouts via Stripe (direct to bank) or PayPal in your dashboard settings.</p>
+<h4>How do I receive my payout?</h4>
+<p>All payouts are sent via PayPal. Enter your PayPal email address in your dashboard Payout Settings to receive payments.</p>
 
 <h3>Verification & Transfer</h3>
 <h4>How does domain verification work?</h4>
