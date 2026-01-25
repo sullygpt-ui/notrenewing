@@ -1,6 +1,10 @@
 import { type NextRequest, NextResponse } from 'next/server';
 import { updateSession } from '@/lib/supabase/middleware';
 
+// Site password protection
+const SITE_PASSWORD = process.env.SITE_PASSWORD;
+const AUTH_COOKIE_NAME = 'site_access';
+
 // Security headers to add to all responses
 const securityHeaders = {
   'X-Frame-Options': 'DENY',
@@ -23,6 +27,24 @@ const securityHeaders = {
 };
 
 export async function middleware(request: NextRequest) {
+  const { pathname } = request.nextUrl;
+
+  // Check site password protection (if enabled)
+  if (SITE_PASSWORD) {
+    const isPasswordPage = pathname === '/password';
+    const isPasswordApi = pathname === '/api/auth/site-password';
+    const isStaticAsset = pathname.startsWith('/_next') || pathname.startsWith('/favicon');
+
+    if (!isPasswordPage && !isPasswordApi && !isStaticAsset) {
+      const authCookie = request.cookies.get(AUTH_COOKIE_NAME);
+
+      if (authCookie?.value !== SITE_PASSWORD) {
+        const passwordUrl = new URL('/password', request.url);
+        return NextResponse.redirect(passwordUrl);
+      }
+    }
+  }
+
   // Update session first
   const response = await updateSession(request);
 
