@@ -115,6 +115,12 @@ export default async function DomainPage({ params }: DomainPageProps) {
                   <dt className="text-sm text-gray-500">Expires</dt>
                   <dd className="text-gray-900 font-medium">{formatExpirationDate(listing.expiration_date)}</dd>
                 </div>
+                {listing.category && (
+                  <div>
+                    <dt className="text-sm text-gray-500">Category</dt>
+                    <dd className="text-gray-900 font-medium capitalize">{listing.category.replace('-', ' ')}</dd>
+                  </div>
+                )}
               </dl>
             </CardContent>
           </Card>

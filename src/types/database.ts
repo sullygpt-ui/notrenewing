@@ -40,8 +40,19 @@ export interface Listing {
   admin_featured: boolean;
   admin_hidden: boolean;
   staff_pick: boolean;
+  category: string | null;
   listed_at: string | null;
   expires_at: string | null;
+  created_at: string;
+}
+
+export interface Category {
+  id: string;
+  slug: string;
+  name: string;
+  description: string | null;
+  icon: string | null;
+  sort_order: number;
   created_at: string;
 }
 

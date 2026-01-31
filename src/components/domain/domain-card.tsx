@@ -53,10 +53,15 @@ export function DomainCard({ listing, isSponsored = false }: DomainCardProps) {
             <h3 className="text-lg font-semibold text-gray-900 truncate group-hover:text-primary-600">
               {listing.domain_name}
             </h3>
-            <div className="flex items-center gap-2 mt-1">
+            <div className="flex items-center gap-2 mt-1 flex-wrap">
               <Badge variant="default" size="sm">
                 .{listing.tld}
               </Badge>
+              {listing.category && (
+                <Badge variant="secondary" size="sm">
+                  {listing.category}
+                </Badge>
+              )}
             </div>
             {expirationInfo && (
               <div className={`flex items-center gap-1 mt-2 text-xs font-medium ${

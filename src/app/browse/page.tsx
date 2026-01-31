@@ -2,7 +2,7 @@ import { createClient } from '@/lib/supabase/server';
 import { DomainGrid } from '@/components/domain';
 import { Badge } from '@/components/ui';
 import Link from 'next/link';
-import type { Listing } from '@/types/database';
+import type { Listing, Category } from '@/types/database';
 
 export const dynamic = 'force-dynamic';
 
@@ -13,6 +13,7 @@ interface BrowsePageProps {
     tld?: string;
     sort?: 'newest' | 'expiring';
     q?: string;
+    category?: string;
   }>;
 }
 
@@ -20,7 +21,15 @@ export default async function BrowsePage({ searchParams }: BrowsePageProps) {
   const params = await searchParams;
   const supabase = await createClient();
 
-  const { tld, sort = 'newest', q } = params;
+  const { tld, sort = 'newest', q, category } = params;
+
+  // Fetch categories
+  const { data: categoriesData } = await supabase
+    .from('categories')
+    .select('*')
+    .order('sort_order', { ascending: true });
+  
+  const categories = (categoriesData || []) as Category[];
 
   let query = supabase
     .from('listings')
@@ -31,6 +40,11 @@ export default async function BrowsePage({ searchParams }: BrowsePageProps) {
   // Filter by TLD
   if (tld && SUPPORTED_TLDS.includes(tld)) {
     query = query.eq('tld', tld);
+  }
+
+  // Filter by category
+  if (category) {
+    query = query.eq('category', category);
   }
 
   // Search by domain name
@@ -48,6 +62,15 @@ export default async function BrowsePage({ searchParams }: BrowsePageProps) {
   const { data: listingsData } = await query.limit(100);
   const listings = (listingsData || []) as Listing[];
 
+  // Helper to build URLs with current params
+  const buildUrl = (newParams: Record<string, string | undefined>) => {
+    const merged = { tld, sort: sort !== 'newest' ? sort : undefined, q, category, ...newParams };
+    const parts = Object.entries(merged)
+      .filter(([_, v]) => v)
+      .map(([k, v]) => `${k}=${encodeURIComponent(v!)}`);
+    return `/browse${parts.length ? `?${parts.join('&')}` : ''}`;
+  };
+
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <div className="mb-8">
@@ -56,42 +79,71 @@ export default async function BrowsePage({ searchParams }: BrowsePageProps) {
       </div>
 
       {/* Filters */}
-      <div className="flex flex-wrap items-center gap-4 mb-8">
-        {/* TLD Filter */}
-        <div className="flex items-center gap-2">
-          <span className="text-sm text-gray-500">Extension:</span>
-          <div className="flex gap-2">
-            <Link href="/browse">
-              <Badge variant={!tld ? 'info' : 'default'} size="md">
-                All
-              </Badge>
-            </Link>
-            {SUPPORTED_TLDS.map((t) => (
-              <Link key={t} href={`/browse?tld=${t}${sort !== 'newest' ? `&sort=${sort}` : ''}${q ? `&q=${q}` : ''}`}>
-                <Badge variant={tld === t ? 'info' : 'default'} size="md">
-                  .{t}
+      <div className="space-y-4 mb-8">
+        {/* TLD and Sort Row */}
+        <div className="flex flex-wrap items-center gap-4">
+          {/* TLD Filter */}
+          <div className="flex items-center gap-2">
+            <span className="text-sm text-gray-500">Extension:</span>
+            <div className="flex flex-wrap gap-2">
+              <Link href={buildUrl({ tld: undefined })}>
+                <Badge variant={!tld ? 'info' : 'default'} size="md">
+                  All
                 </Badge>
               </Link>
-            ))}
+              {SUPPORTED_TLDS.map((t) => (
+                <Link key={t} href={buildUrl({ tld: t })}>
+                  <Badge variant={tld === t ? 'info' : 'default'} size="md">
+                    .{t}
+                  </Badge>
+                </Link>
+              ))}
+            </div>
+          </div>
+
+          {/* Sort */}
+          <div className="flex items-center gap-2 ml-auto">
+            <span className="text-sm text-gray-500">Sort:</span>
+            <div className="flex gap-2">
+              <Link href={buildUrl({ sort: undefined })}>
+                <Badge variant={sort === 'newest' ? 'info' : 'default'} size="md">
+                  Newest
+                </Badge>
+              </Link>
+              <Link href={buildUrl({ sort: 'expiring' })}>
+                <Badge variant={sort === 'expiring' ? 'info' : 'default'} size="md">
+                  Expiring Soon
+                </Badge>
+              </Link>
+            </div>
           </div>
         </div>
 
-        {/* Sort */}
-        <div className="flex items-center gap-2 ml-auto">
-          <span className="text-sm text-gray-500">Sort:</span>
-          <div className="flex gap-2">
-            <Link href={`/browse?${tld ? `tld=${tld}` : ''}${q ? `${tld ? '&' : ''}q=${q}` : ''}`}>
-              <Badge variant={sort === 'newest' ? 'info' : 'default'} size="md">
-                Newest
-              </Badge>
-            </Link>
-            <Link href={`/browse?${tld ? `tld=${tld}&` : ''}sort=expiring${q ? `&q=${q}` : ''}`}>
-              <Badge variant={sort === 'expiring' ? 'info' : 'default'} size="md">
-                Expiring Soon
-              </Badge>
-            </Link>
+        {/* Category Filter Row */}
+        {categories.length > 0 && (
+          <div className="flex items-center gap-2">
+            <span className="text-sm text-gray-500">Category:</span>
+            <div className="flex flex-wrap gap-2">
+              <Link href={buildUrl({ category: undefined })}>
+                <Badge variant={!category ? 'info' : 'default'} size="md">
+                  All
+                </Badge>
+              </Link>
+              {categories.slice(0, 8).map((cat) => (
+                <Link key={cat.slug} href={buildUrl({ category: cat.slug })}>
+                  <Badge variant={category === cat.slug ? 'info' : 'default'} size="md">
+                    {cat.icon} {cat.name}
+                  </Badge>
+                </Link>
+              ))}
+              {categories.length > 8 && (
+                <Badge variant="default" size="md">
+                  +{categories.length - 8} more
+                </Badge>
+              )}
+            </div>
           </div>
-        </div>
+        )}
       </div>
 
       {/* Search */}
@@ -99,6 +151,7 @@ export default async function BrowsePage({ searchParams }: BrowsePageProps) {
         <form action="/browse" method="GET">
           {tld && <input type="hidden" name="tld" value={tld} />}
           {sort !== 'newest' && <input type="hidden" name="sort" value={sort} />}
+          {category && <input type="hidden" name="category" value={category} />}
           <div className="relative">
             <input
               type="text"
