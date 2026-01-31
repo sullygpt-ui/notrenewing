@@ -5,4 +5,3 @@ export { ListingFilters } from './listing-filters';
 export { WatchlistButton } from './watchlist-button';
 export { DomainInsights } from './domain-insights';
 export { RemoveListingButton } from './remove-listing-button';
-export { RestoreListingButton } from './restore-listing-button';
