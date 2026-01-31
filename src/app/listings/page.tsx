@@ -98,7 +98,7 @@ export default async function ListingsPage({ searchParams }: ListingsPageProps) 
                 {statusFilter ? `No ${statusFilter.replace(/_/g, ' ')} listings` : 'No domains listed yet'}
               </p>
               <Link href="/submit">
-                <Button>Submit Your First Domain</Button>
+                <Button>Submit Your Domains</Button>
               </Link>
             </div>
           </CardContent>
