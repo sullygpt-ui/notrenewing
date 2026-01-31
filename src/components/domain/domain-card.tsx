@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { Clock, Flame } from 'lucide-react';
 import { Badge } from '@/components/ui';
 import type { Listing } from '@/types/database';
 
@@ -9,17 +10,29 @@ interface DomainCardProps {
 
 export function DomainCard({ listing, isSponsored = false }: DomainCardProps) {
 
-  const formatExpirationDate = (date: string | null) => {
+  const getExpirationInfo = (date: string | null) => {
     if (!date) return null;
     const expDate = new Date(date);
     const now = new Date();
     const daysUntil = Math.ceil((expDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
 
-    if (daysUntil <= 30) {
-      return `Expires in ${daysUntil} days`;
+    if (daysUntil <= 7) {
+      return { text: `${daysUntil}d left`, urgent: true, critical: true };
     }
-    return `Expires ${expDate.toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}`;
+    if (daysUntil <= 14) {
+      return { text: `${daysUntil} days left`, urgent: true, critical: false };
+    }
+    if (daysUntil <= 30) {
+      return { text: `${daysUntil} days left`, urgent: false, critical: false };
+    }
+    return { 
+      text: `Exp ${expDate.toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}`, 
+      urgent: false, 
+      critical: false 
+    };
   };
+
+  const expirationInfo = getExpirationInfo(listing.expiration_date);
 
   return (
     <Link href={`/domain/${listing.domain_name}`}>
@@ -45,10 +58,21 @@ export function DomainCard({ listing, isSponsored = false }: DomainCardProps) {
                 .{listing.tld}
               </Badge>
             </div>
-            {listing.expiration_date && (
-              <p className="text-xs text-gray-500 mt-2">
-                {formatExpirationDate(listing.expiration_date)}
-              </p>
+            {expirationInfo && (
+              <div className={`flex items-center gap-1 mt-2 text-xs font-medium ${
+                expirationInfo.critical 
+                  ? 'text-red-600' 
+                  : expirationInfo.urgent 
+                    ? 'text-orange-600' 
+                    : 'text-gray-500'
+              }`}>
+                {expirationInfo.critical ? (
+                  <Flame className="w-3 h-3" />
+                ) : expirationInfo.urgent ? (
+                  <Clock className="w-3 h-3" />
+                ) : null}
+                {expirationInfo.text}
+              </div>
             )}
           </div>
 

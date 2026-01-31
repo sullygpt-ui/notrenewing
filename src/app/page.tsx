@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase/server';
 import { DomainGrid, HeroSearch } from '@/components/domain';
-import { Button, Badge, NewsletterForm } from '@/components/ui';
+import { Button, Badge, NewsletterForm, SocialProof } from '@/components/ui';
 import type { Listing } from '@/types/database';
 
 export const dynamic = 'force-dynamic';
@@ -10,6 +10,27 @@ const SUPPORTED_TLDS = ['com', 'net', 'org', 'io', 'ai'];
 
 export default async function HomePage() {
   const supabase = await createClient();
+
+  // Fetch stats for social proof
+  const oneWeekAgo = new Date();
+  oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+  
+  const { count: soldThisWeek } = await supabase
+    .from('purchases')
+    .select('*', { count: 'exact', head: true })
+    .eq('transfer_status', 'completed')
+    .gte('created_at', oneWeekAgo.toISOString());
+
+  const { count: activeListings } = await supabase
+    .from('listings')
+    .select('*', { count: 'exact', head: true })
+    .eq('status', 'active')
+    .eq('admin_hidden', false);
+
+  const { count: totalSold } = await supabase
+    .from('purchases')
+    .select('*', { count: 'exact', head: true })
+    .eq('transfer_status', 'completed');
 
   // Fetch top AI-scored domains for leaderboard
   const { data: leaderboardData } = await supabase
@@ -64,6 +85,17 @@ export default async function HomePage() {
             Every domain is $99. No negotiation.
           </p>
           <HeroSearch />
+        </div>
+      </section>
+
+      {/* Social Proof Bar */}
+      <section className="bg-gray-50 py-4 border-b border-gray-200">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <SocialProof 
+            soldThisWeek={soldThisWeek || 0} 
+            activeListings={activeListings || 0} 
+            totalSold={totalSold || 0} 
+          />
         </div>
       </section>
 

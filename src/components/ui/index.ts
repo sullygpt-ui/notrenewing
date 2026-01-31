@@ -11,3 +11,7 @@ export { Badge } from './badge';
 export { SearchBar } from './search-bar';
 
 export { NewsletterForm } from './newsletter-form';
+
+export { SocialProof } from './social-proof';
+
+export { ShareButtons } from './share-buttons';

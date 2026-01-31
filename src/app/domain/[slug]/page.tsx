@@ -1,7 +1,7 @@
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase/server';
-import { Button, Badge, Card, CardContent } from '@/components/ui';
+import { Button, Badge, Card, CardContent, ShareButtons } from '@/components/ui';
 import type { Listing } from '@/types/database';
 
 export const dynamic = 'force-dynamic';
@@ -87,6 +87,12 @@ export default async function DomainPage({ params }: DomainPageProps) {
             <h1 className="text-3xl md:text-4xl font-bold text-gray-900 break-all">
               {listing.domain_name}
             </h1>
+            <div className="mt-3">
+              <ShareButtons 
+                domain={listing.domain_name} 
+                url={`https://notrenewing.com/domain/${listing.domain_name}`} 
+              />
+            </div>
           </div>
 
           <Card className="mb-6">
