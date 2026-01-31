@@ -56,6 +56,13 @@ export interface Category {
   created_at: string;
 }
 
+export interface WatchlistItem {
+  id: string;
+  user_id: string;
+  listing_id: string;
+  created_at: string;
+}
+
 export interface Purchase {
   id: string;
   listing_id: string;

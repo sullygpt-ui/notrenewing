@@ -1,14 +1,17 @@
 import Link from 'next/link';
 import { Clock, Flame } from 'lucide-react';
 import { Badge } from '@/components/ui';
+import { WatchlistButton } from './watchlist-button';
 import type { Listing } from '@/types/database';
 
 interface DomainCardProps {
   listing: Listing;
   isSponsored?: boolean;
+  isWatched?: boolean;
+  showWatchlistButton?: boolean;
 }
 
-export function DomainCard({ listing, isSponsored = false }: DomainCardProps) {
+export function DomainCard({ listing, isSponsored = false, isWatched = false, showWatchlistButton = false }: DomainCardProps) {
 
   const getExpirationInfo = (date: string | null) => {
     if (!date) return null;
@@ -46,6 +49,11 @@ export function DomainCard({ listing, isSponsored = false }: DomainCardProps) {
           <span className="absolute -top-2 -right-2 px-2 py-0.5 bg-orange-500 text-white text-xs font-medium rounded-full">
             Staff Pick
           </span>
+        )}
+        {showWatchlistButton && (
+          <div className="absolute top-2 right-2">
+            <WatchlistButton listingId={listing.id} isWatched={isWatched} size="sm" />
+          </div>
         )}
 
         <div className="flex items-start justify-between gap-4">

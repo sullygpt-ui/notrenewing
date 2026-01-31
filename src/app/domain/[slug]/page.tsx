@@ -2,6 +2,7 @@ import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase/server';
 import { Button, Badge, Card, CardContent, ShareButtons } from '@/components/ui';
+import { WatchlistButton } from '@/components/domain';
 import type { Listing } from '@/types/database';
 
 export const dynamic = 'force-dynamic';
@@ -29,6 +30,19 @@ export default async function DomainPage({ params }: DomainPageProps) {
   }
 
   const listing = listingData as Listing;
+
+  // Check if user has this in their watchlist
+  const { data: { user } } = await supabase.auth.getUser();
+  let isWatched = false;
+  if (user) {
+    const { data: watchlistItem } = await supabase
+      .from('watchlist')
+      .select('id')
+      .eq('user_id', user.id)
+      .eq('listing_id', listing.id)
+      .single();
+    isWatched = !!watchlistItem;
+  }
 
   const tierLabels: Record<string, string> = {
     high: 'High Interest',
@@ -87,11 +101,15 @@ export default async function DomainPage({ params }: DomainPageProps) {
             <h1 className="text-3xl md:text-4xl font-bold text-gray-900 break-all">
               {listing.domain_name}
             </h1>
-            <div className="mt-3">
+            <div className="mt-3 flex items-center gap-4">
               <ShareButtons 
                 domain={listing.domain_name} 
                 url={`https://notrenewing.com/domain/${listing.domain_name}`} 
               />
+              <div className="flex items-center gap-2 border-l border-gray-200 pl-4">
+                <span className="text-sm text-gray-500">Save:</span>
+                <WatchlistButton listingId={listing.id} isWatched={isWatched} />
+              </div>
             </div>
           </div>
 
