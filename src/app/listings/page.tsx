@@ -2,7 +2,7 @@ import { redirect } from 'next/navigation';
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase/server';
 import { Card, CardHeader, CardTitle, CardContent, Button, Badge } from '@/components/ui';
-import { ListingFilters } from '@/components/domain';
+import { ListingFilters, RemoveListingButton } from '@/components/domain';
 import type { Listing } from '@/types/database';
 
 export const dynamic = 'force-dynamic';
@@ -149,6 +149,10 @@ export default async function ListingsPage({ searchParams }: ListingsPageProps) 
                     <Link href={`/domain/${listing.domain_name}`}>
                       <Button variant="ghost" size="sm">View</Button>
                     </Link>
+                  )}
+
+                  {listing.status !== 'sold' && listing.status !== 'removed' && (
+                    <RemoveListingButton listingId={listing.id} domainName={listing.domain_name} />
                   )}
                 </div>
               </div>
