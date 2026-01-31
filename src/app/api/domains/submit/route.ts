@@ -78,15 +78,20 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: insertError.message }, { status: 500 });
     }
 
-    // Send verification emails for each domain (don't block the response)
+    // Send verification emails for each domain
     if (createdListings && user.email) {
       for (const listing of createdListings) {
-        sendVerificationEmail(
-          user.email,
-          listing.domain_name,
-          listing.verification_token,
-          listing.id
-        ).catch((err) => console.error('Failed to send verification email:', err));
+        try {
+          const result = await sendVerificationEmail(
+            user.email,
+            listing.domain_name,
+            listing.verification_token,
+            listing.id
+          );
+          console.log(`Email sent for ${listing.domain_name}:`, result);
+        } catch (err) {
+          console.error(`Failed to send verification email for ${listing.domain_name}:`, err);
+        }
       }
     }
 
