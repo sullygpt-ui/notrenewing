@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { checkRateLimit } from '@/lib/api-utils';
+import { sendVerificationEmail } from '@/lib/email';
 
 interface DomainSubmission {
   domain: string;
@@ -75,6 +76,18 @@ export async function POST(request: NextRequest) {
     if (insertError) {
       console.error('Failed to create listings:', insertError);
       return NextResponse.json({ error: insertError.message }, { status: 500 });
+    }
+
+    // Send verification emails for each domain (don't block the response)
+    if (createdListings && user.email) {
+      for (const listing of createdListings) {
+        sendVerificationEmail(
+          user.email,
+          listing.domain_name,
+          listing.verification_token,
+          listing.id
+        ).catch((err) => console.error('Failed to send verification email:', err));
+      }
     }
 
     // Return listing IDs - listings are free
