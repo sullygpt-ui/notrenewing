@@ -2,7 +2,7 @@ import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase/server';
 import { Button, Badge, Card, CardContent, ShareButtons } from '@/components/ui';
-import { WatchlistButton } from '@/components/domain';
+import { WatchlistButton, DomainInsights } from '@/components/domain';
 import type { Listing } from '@/types/database';
 
 export const dynamic = 'force-dynamic';
@@ -113,35 +113,17 @@ export default async function DomainPage({ params }: DomainPageProps) {
             </div>
           </div>
 
-          <Card className="mb-6">
-            <CardContent>
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">Domain Details</h2>
-              <dl className="grid grid-cols-2 gap-4">
-                <div>
-                  <dt className="text-sm text-gray-500">Extension</dt>
-                  <dd className="text-gray-900 font-medium">.{listing.tld}</dd>
-                </div>
-                <div>
-                  <dt className="text-sm text-gray-500">Registrar</dt>
-                  <dd className="text-gray-900 font-medium">{listing.registrar || 'Unknown'}</dd>
-                </div>
-                <div>
-                  <dt className="text-sm text-gray-500">Domain Age</dt>
-                  <dd className="text-gray-900 font-medium">{formatDomainAge(listing.domain_age_months)}</dd>
-                </div>
-                <div>
-                  <dt className="text-sm text-gray-500">Expires</dt>
-                  <dd className="text-gray-900 font-medium">{formatExpirationDate(listing.expiration_date)}</dd>
-                </div>
-                {listing.category && (
-                  <div>
-                    <dt className="text-sm text-gray-500">Category</dt>
-                    <dd className="text-gray-900 font-medium capitalize">{listing.category.replace('-', ' ')}</dd>
-                  </div>
-                )}
-              </dl>
-            </CardContent>
-          </Card>
+          {/* Domain Insights */}
+          <div className="mb-6">
+            <DomainInsights
+              domainName={listing.domain_name}
+              domainAgeMonths={listing.domain_age_months}
+              expirationDate={listing.expiration_date}
+              registrar={listing.registrar}
+              aiScore={listing.ai_score}
+              aiTier={listing.ai_tier}
+            />
+          </div>
 
           <Card>
             <CardContent>
