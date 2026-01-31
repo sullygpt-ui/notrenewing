@@ -11,14 +11,17 @@ CREATE TABLE IF NOT EXISTS watchlist (
 ALTER TABLE watchlist ENABLE ROW LEVEL SECURITY;
 
 -- Users can view their own watchlist
+DROP POLICY IF EXISTS "Users can view own watchlist" ON watchlist;
 CREATE POLICY "Users can view own watchlist" ON watchlist
   FOR SELECT USING (auth.uid() = user_id);
 
 -- Users can add to their own watchlist
+DROP POLICY IF EXISTS "Users can add to own watchlist" ON watchlist;
 CREATE POLICY "Users can add to own watchlist" ON watchlist
   FOR INSERT WITH CHECK (auth.uid() = user_id);
 
 -- Users can remove from their own watchlist
+DROP POLICY IF EXISTS "Users can delete from own watchlist" ON watchlist;
 CREATE POLICY "Users can delete from own watchlist" ON watchlist
   FOR DELETE USING (auth.uid() = user_id);
 

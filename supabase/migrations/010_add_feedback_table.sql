@@ -11,9 +11,11 @@ ALTER TABLE feedback ENABLE ROW LEVEL SECURITY;
 
 -- Only allow inserts from authenticated or anonymous users (via API)
 -- Admins can read all feedback
+DROP POLICY IF EXISTS "Anyone can submit feedback" ON feedback;
 CREATE POLICY "Anyone can submit feedback" ON feedback
   FOR INSERT WITH CHECK (true);
 
+DROP POLICY IF EXISTS "Admins can view feedback" ON feedback;
 CREATE POLICY "Admins can view feedback" ON feedback
   FOR SELECT USING (
     EXISTS (
