@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { Shield, Zap } from 'lucide-react';
 import { createClient } from '@/lib/supabase/server';
 import { DomainGrid, HeroSearch } from '@/components/domain';
-import { Button, Badge, NewsletterForm, SocialProof, DomainAlertsForm } from '@/components/ui';
+import { Button, Badge, SocialProof, DomainAlertsForm } from '@/components/ui';
 import type { Listing } from '@/types/database';
 
 export const dynamic = 'force-dynamic';
@@ -271,16 +271,6 @@ export default async function HomePage() {
           </div>
         </section>
       )}
-
-      {/* Newsletter Section - Keep the original one for general updates */}
-      <section className="py-12 md:py-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-2xl font-bold text-gray-900 text-center mb-4">
-            Stay Updated
-          </h2>
-          <NewsletterForm />
-        </div>
-      </section>
 
       {/* CTA Section */}
       <section className="py-12 md:py-16 bg-gradient-to-br from-primary-600 to-primary-700">
