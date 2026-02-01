@@ -1,7 +1,24 @@
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
+import Image from 'next/image';
 import { ArrowLeft, Calendar, Clock, Share2 } from 'lucide-react';
 import { ShareButtons } from '@/components/ui';
+
+// Author data
+const authors = {
+  mike: {
+    name: 'Mike Sullivan',
+    headshot: 'https://i.pravatar.cc/150?u=mike-sullivan',
+  },
+  sarah: {
+    name: 'Sarah Chen',
+    headshot: 'https://i.pravatar.cc/150?u=sarah-chen',
+  },
+  alex: {
+    name: 'Alex Rivera',
+    headshot: 'https://i.pravatar.cc/150?u=alex-rivera',
+  },
+};
 
 // Blog posts content - can be moved to a CMS later
 const blogPosts: Record<string, {
@@ -10,6 +27,7 @@ const blogPosts: Record<string, {
   date: string;
   readTime: number;
   category: string;
+  author: { name: string; headshot: string };
   content: string;
 }> = {
   'why-buy-expiring-domains': {
@@ -18,6 +36,7 @@ const blogPosts: Record<string, {
     date: '2025-01-31',
     readTime: 5,
     category: 'Domain Investing',
+    author: authors.mike,
     content: `
 ## The Hidden Opportunity in Expiring Domains
 
@@ -63,6 +82,7 @@ Ready to find your next domain? [Browse our listings](/browse) or [sign up](/sig
     date: '2025-01-28',
     readTime: 8,
     category: 'Guides',
+    author: authors.sarah,
     content: `
 ## Understanding Domain Transfers
 
@@ -122,6 +142,7 @@ When you buy through NotRenewing:
     date: '2025-01-25',
     readTime: 6,
     category: 'Domain Investing',
+    author: authors.alex,
     content: `
 ## The Art and Science of Domain Valuation
 
@@ -176,6 +197,7 @@ We use AI to evaluate domains and surface the best opportunities. Our scoring co
     date: '2025-01-24',
     readTime: 4,
     category: 'Weekly Picks',
+    author: authors.mike,
     content: `
 ## This Week's Highlights
 
@@ -263,6 +285,20 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
         <p className="text-xl text-gray-600 mb-6">
           {post.excerpt}
         </p>
+
+        <div className="flex items-center gap-3 mb-6">
+          <Image
+            src={post.author.headshot}
+            alt={post.author.name}
+            width={48}
+            height={48}
+            className="rounded-full"
+          />
+          <div>
+            <p className="font-medium text-gray-900">{post.author.name}</p>
+            <p className="text-sm text-gray-500">Author</p>
+          </div>
+        </div>
 
         <ShareButtons 
           domain={post.title} 

@@ -1,5 +1,22 @@
 import Link from 'next/link';
+import Image from 'next/image';
 import { ArrowRight, Calendar, Clock } from 'lucide-react';
+
+// Author data
+const authors = {
+  mike: {
+    name: 'Mike Sullivan',
+    headshot: 'https://i.pravatar.cc/150?u=mike-sullivan',
+  },
+  sarah: {
+    name: 'Sarah Chen',
+    headshot: 'https://i.pravatar.cc/150?u=sarah-chen',
+  },
+  alex: {
+    name: 'Alex Rivera',
+    headshot: 'https://i.pravatar.cc/150?u=alex-rivera',
+  },
+};
 
 // Blog posts data - can be moved to a CMS later
 const blogPosts = [
@@ -10,6 +27,7 @@ const blogPosts = [
     date: '2025-01-31',
     readTime: 5,
     category: 'Domain Investing',
+    author: authors.mike,
   },
   {
     slug: 'domain-transfer-guide',
@@ -18,6 +36,7 @@ const blogPosts = [
     date: '2025-01-28',
     readTime: 8,
     category: 'Guides',
+    author: authors.sarah,
   },
   {
     slug: 'what-makes-domain-valuable',
@@ -26,6 +45,7 @@ const blogPosts = [
     date: '2025-01-25',
     readTime: 6,
     category: 'Domain Investing',
+    author: authors.alex,
   },
   {
     slug: 'best-domains-this-week',
@@ -34,6 +54,7 @@ const blogPosts = [
     date: '2025-01-24',
     readTime: 4,
     category: 'Weekly Picks',
+    author: authors.mike,
   },
 ];
 
@@ -74,9 +95,21 @@ export default function BlogPage() {
               <p className="text-gray-600 mb-4">
                 {post.excerpt}
               </p>
-              <span className="inline-flex items-center gap-1 text-primary-600 font-medium text-sm hover:gap-2 transition-all">
-                Read more <ArrowRight className="w-4 h-4" />
-              </span>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <Image
+                    src={post.author.headshot}
+                    alt={post.author.name}
+                    width={24}
+                    height={24}
+                    className="rounded-full"
+                  />
+                  <span className="text-sm text-gray-600">{post.author.name}</span>
+                </div>
+                <span className="inline-flex items-center gap-1 text-primary-600 font-medium text-sm hover:gap-2 transition-all">
+                  Read more <ArrowRight className="w-4 h-4" />
+                </span>
+              </div>
             </Link>
           </article>
         ))}
