@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { checkRateLimit } from '@/lib/api-utils';
 import { sendVerificationEmail } from '@/lib/email';
+import { lookupDomain } from '@/lib/dns/rdap';
 
 interface DomainSubmission {
   domain: string;
@@ -59,13 +60,30 @@ export async function POST(request: NextRequest) {
       }, { status: 400 });
     }
 
-    // Create listings - always free, go directly to pending_verification
-    const listings = domains.map((d) => ({
+    // Fetch RDAP data for all domains in parallel
+    const domainInfoPromises = domains.map(async (d) => {
+      try {
+        const info = await lookupDomain(d.domain);
+        return { domain: d.domain, tld: d.tld, info };
+      } catch (error) {
+        console.error(`RDAP lookup failed for ${d.domain}:`, error);
+        return { domain: d.domain, tld: d.tld, info: null };
+      }
+    });
+
+    const domainInfoResults = await Promise.all(domainInfoPromises);
+
+    // Create listings with domain info
+    const listings = domainInfoResults.map((result) => ({
       seller_id: user.id,
-      domain_name: d.domain,
-      tld: d.tld,
+      domain_name: result.domain,
+      tld: result.tld,
       status: 'pending_verification' as const,
       verification_token: crypto.randomUUID().split('-')[0].toUpperCase(),
+      // Add RDAP data if available
+      domain_age_months: result.info?.ageInMonths ?? null,
+      expiration_date: result.info?.expirationDate?.toISOString() ?? null,
+      registrar: result.info?.registrar ?? null,
     }));
 
     const { data: createdListings, error: insertError } = await supabase

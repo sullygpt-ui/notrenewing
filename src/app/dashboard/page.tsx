@@ -220,13 +220,53 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
 
           {filteredListings && filteredListings.length > 0 ? (
             <div className="divide-y divide-gray-200">
-              {filteredListings.map((listing) => (
+              {filteredListings.map((listing) => {
+                // Calculate expiration display
+                const getExpirationDisplay = () => {
+                  if (!listing.expiration_date) return null;
+                  const expDate = new Date(listing.expiration_date);
+                  const now = new Date();
+                  const daysUntil = Math.ceil((expDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
+                  if (daysUntil <= 30) return { text: `${daysUntil}d`, urgent: true };
+                  if (daysUntil <= 90) return { text: `${Math.ceil(daysUntil / 30)}mo`, urgent: false };
+                  return { text: expDate.toLocaleDateString('en-US', { month: 'short', year: 'numeric' }), urgent: false };
+                };
+                const expDisplay = getExpirationDisplay();
+                
+                // Domain age display
+                const getAgeDisplay = () => {
+                  if (!listing.domain_age_months) return null;
+                  if (listing.domain_age_months < 12) return `${listing.domain_age_months}mo`;
+                  const years = Math.floor(listing.domain_age_months / 12);
+                  return `${years}yr${years > 1 ? 's' : ''}`;
+                };
+                const ageDisplay = getAgeDisplay();
+                
+                return (
                 <div key={listing.id} className="py-4 flex items-center justify-between">
-                  <div>
+                  <div className="min-w-0 flex-1">
                     <p className="font-medium text-gray-900">{listing.domain_name}</p>
-                    <p className="text-sm text-gray-500">
-                      Listed {listing.listed_at ? new Date(listing.listed_at).toLocaleDateString() : 'Pending'}
-                    </p>
+                    <div className="flex flex-wrap items-center gap-3 text-sm text-gray-500 mt-1">
+                      {listing.listed_at && (
+                        <span>Listed {new Date(listing.listed_at).toLocaleDateString()}</span>
+                      )}
+                      {ageDisplay && (
+                        <span className="inline-flex items-center gap-1">
+                          <span className="text-gray-400">Age:</span> {ageDisplay}
+                        </span>
+                      )}
+                      {expDisplay && (
+                        <span className={`inline-flex items-center gap-1 ${expDisplay.urgent ? 'text-orange-600 font-medium' : ''}`}>
+                          <span className="text-gray-400">Exp:</span> {expDisplay.text}
+                        </span>
+                      )}
+                      {listing.registrar && (
+                        <span className="inline-flex items-center gap-1 truncate max-w-[200px]">
+                          <span className="text-gray-400">Reg:</span> 
+                          <span className="truncate">{listing.registrar}</span>
+                        </span>
+                      )}
+                    </div>
                   </div>
                   <div className="flex items-center gap-3">
                     <Badge
@@ -265,7 +305,8 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
                     )}
                   </div>
                 </div>
-              ))}
+              );
+              })}
             </div>
           ) : (
             <div className="text-center py-8">
