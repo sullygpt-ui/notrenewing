@@ -209,8 +209,11 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
 
       {/* Listings */}
       <Card>
-        <CardHeader>
+        <CardHeader className="flex flex-row items-center justify-between">
           <CardTitle>Your Listings</CardTitle>
+          <Link href="/submit">
+            <Button size="sm">+ Submit Domains</Button>
+          </Link>
         </CardHeader>
         <CardContent>
           <ListingFilters counts={filterCounts} />
