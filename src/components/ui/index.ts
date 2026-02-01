@@ -15,3 +15,5 @@ export { NewsletterForm } from './newsletter-form';
 export { SocialProof } from './social-proof';
 
 export { ShareButtons } from './share-buttons';
+
+export { DomainAlertsForm } from './domain-alerts-form';
