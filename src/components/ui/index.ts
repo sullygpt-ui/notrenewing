@@ -17,3 +17,15 @@ export { SocialProof } from './social-proof';
 export { ShareButtons } from './share-buttons';
 
 export { DomainAlertsForm } from './domain-alerts-form';
+
+export { Logo } from './logo';
+
+export { AnimatedCounter } from './animated-counter';
+
+export { Testimonials } from './testimonials';
+
+export { PaymentBadges } from './payment-badges';
+
+export { Skeleton, DomainCardSkeleton, DomainGridSkeleton } from './skeleton';
+
+export { Tooltip } from './tooltip';

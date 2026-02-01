@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { createClient } from '@/lib/supabase/client';
-import { Button, SearchBar } from '@/components/ui';
+import { Button, SearchBar, Logo } from '@/components/ui';
 import type { User } from '@supabase/supabase-js';
 
 export function Header() {
@@ -49,7 +49,7 @@ export function Header() {
         <div className="flex items-center justify-between h-16">
           <div className="flex items-center gap-8">
             <Link href="/" className="flex items-center gap-2">
-              <span className="text-xl font-bold text-gray-900">NotRenewing</span>
+              <Logo size="md" />
             </Link>
             <nav className="hidden md:flex items-center gap-6">
               <Link

@@ -1,6 +1,6 @@
 import Link from 'next/link';
-import { Clock, Flame, Star, Calendar } from 'lucide-react';
-import { Badge } from '@/components/ui';
+import { Clock, Flame, Star, Calendar, Sparkles } from 'lucide-react';
+import { Badge, Tooltip } from '@/components/ui';
 import { WatchlistButton } from './watchlist-button';
 import type { Listing } from '@/types/database';
 
@@ -69,7 +69,7 @@ export function DomainCard({ listing, isSponsored = false, isWatched = false, sh
 
   return (
     <Link href={`/domain/${listing.domain_name}`}>
-      <div className="group relative bg-white rounded-xl border border-gray-200 p-4 hover:border-primary-400 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200">
+      <div className="group relative bg-white rounded-xl border border-gray-200 p-4 hover:border-primary-400 hover:shadow-xl hover:shadow-primary-500/10 hover:-translate-y-1 transition-all duration-300">
         {isSponsored && (
           <span className="absolute -top-2 -right-2 px-2 py-0.5 bg-yellow-100 text-yellow-700 text-xs font-medium rounded-full border border-yellow-200">
             Sponsored
@@ -100,13 +100,30 @@ export function DomainCard({ listing, isSponsored = false, isWatched = false, sh
                 .{listing.tld}
               </span>
               
-              {/* AI Tier badge */}
+              {/* AI Tier badge with tooltip */}
               {aiTier && (
-                <span className={`inline-flex items-center gap-0.5 px-2 py-0.5 text-xs font-medium rounded-full bg-gray-50 ${aiTier.color}`}>
-                  {[...Array(aiTier.stars)].map((_, i) => (
-                    <Star key={i} className="w-2.5 h-2.5 fill-current" />
-                  ))}
-                </span>
+                <Tooltip 
+                  content={
+                    <div className="max-w-[200px]">
+                      <div className="flex items-center gap-1 mb-1">
+                        <Sparkles className="w-3 h-3 text-yellow-400" />
+                        <span className="font-semibold">AI Score: {aiTier.label}</span>
+                      </div>
+                      {listing.ai_reasoning && (
+                        <p className="text-xs text-gray-300 leading-relaxed">
+                          {listing.ai_reasoning}
+                        </p>
+                      )}
+                    </div>
+                  }
+                  position="bottom"
+                >
+                  <span className={`inline-flex items-center gap-0.5 px-2 py-0.5 text-xs font-medium rounded-full bg-gray-50 ${aiTier.color} cursor-help hover:bg-gray-100 transition-colors`}>
+                    {[...Array(aiTier.stars)].map((_, i) => (
+                      <Star key={i} className="w-2.5 h-2.5 fill-current" />
+                    ))}
+                  </span>
+                </Tooltip>
               )}
               
               {/* Category badge */}

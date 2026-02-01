@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { Shield, Zap } from 'lucide-react';
 import { createClient } from '@/lib/supabase/server';
 import { DomainGrid, HeroSearch } from '@/components/domain';
-import { Button, Badge, SocialProof, DomainAlertsForm } from '@/components/ui';
+import { Button, Badge, SocialProof, DomainAlertsForm, Testimonials, PaymentBadges } from '@/components/ui';
 import type { Listing } from '@/types/database';
 
 export const dynamic = 'force-dynamic';
@@ -92,38 +92,49 @@ export default async function HomePage() {
       </div>
 
       {/* Hero Section */}
-      <section className="relative bg-gradient-to-br from-primary-600 via-primary-600 to-primary-700 py-12 md:py-16 overflow-hidden">
-        {/* Subtle pattern overlay */}
-        <div className="absolute inset-0 opacity-5">
+      <section className="relative bg-gradient-to-br from-primary-600 via-primary-600 to-primary-700 py-16 md:py-24 overflow-hidden">
+        {/* Floating decorative shapes */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <div className="absolute -top-10 -left-10 w-40 h-40 bg-white/5 rounded-full blur-2xl" />
+          <div className="absolute top-1/4 -right-20 w-60 h-60 bg-primary-400/20 rounded-full blur-3xl" />
+          <div className="absolute -bottom-20 left-1/4 w-80 h-80 bg-primary-800/30 rounded-full blur-3xl" />
+          <div className="absolute top-10 right-1/4 w-4 h-4 bg-yellow-400/60 rounded-full animate-pulse" />
+          <div className="absolute bottom-20 left-10 w-3 h-3 bg-white/40 rounded-full animate-pulse" style={{ animationDelay: '1s' }} />
+          <div className="absolute top-1/3 left-20 w-2 h-2 bg-primary-200/50 rounded-full animate-pulse" style={{ animationDelay: '0.5s' }} />
+        </div>
+
+        {/* Grid pattern overlay */}
+        <div className="absolute inset-0 opacity-[0.03]">
           <div className="absolute inset-0" style={{
-            backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
+            backgroundImage: `url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 0h40v40H0V0zm1 1v38h38V1H1z' fill='%23ffffff' fill-opacity='1'/%3E%3C/svg%3E")`,
           }} />
         </div>
         
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h1 className="text-3xl md:text-5xl font-bold text-white mb-3">
-            Domains You Won&apos;t Renew.{' '}
-            <span className="text-primary-200">Buyers Who Will.</span>
+          <h1 className="text-4xl md:text-6xl font-bold text-white mb-4 tracking-tight">
+            Domains You Won&apos;t Renew.
+            <br />
+            <span className="bg-gradient-to-r from-yellow-300 via-amber-200 to-yellow-400 bg-clip-text text-transparent">
+              Buyers Who Will.
+            </span>
           </h1>
-          <p className="text-primary-100 text-lg mb-8">
-            Every domain is <span className="font-bold text-white">$99</span>. No negotiation. No hassle.
+          <p className="text-primary-100 text-lg md:text-xl mb-10 max-w-2xl mx-auto">
+            Every domain is <span className="font-bold text-white bg-white/10 px-2 py-0.5 rounded">$99</span>. No negotiation. No hassle.
           </p>
           <HeroSearch />
           
           {/* Trust signals */}
-          <div className="flex flex-wrap items-center justify-center gap-4 mt-8 text-sm text-primary-200">
-            <div className="flex items-center gap-1.5">
+          <div className="flex flex-wrap items-center justify-center gap-4 mt-10 text-sm text-primary-200">
+            <div className="flex items-center gap-1.5 bg-white/10 px-3 py-1.5 rounded-full backdrop-blur-sm">
               <Shield className="w-4 h-4" />
               <span>Secure transfers via Stripe</span>
             </div>
-            <span className="hidden sm:inline text-primary-400">•</span>
-            <div className="flex items-center gap-1.5">
+            <div className="flex items-center gap-1.5 bg-white/10 px-3 py-1.5 rounded-full backdrop-blur-sm">
               <Zap className="w-4 h-4" />
               <span>AI-powered domain scoring</span>
             </div>
-            <span className="hidden sm:inline text-primary-400">•</span>
-            <div className="flex items-center gap-1.5">
-              <span>From the creators of</span>
+            <div className="flex items-center gap-1.5 bg-white/10 px-3 py-1.5 rounded-full backdrop-blur-sm">
+              <span>From</span>
               <Link href="https://sullysblog.com" className="font-semibold text-white hover:underline">
                 SullysBlog.com
               </Link>
@@ -204,13 +215,14 @@ export default async function HomePage() {
       {/* Browse by TLD Section */}
       <section className="py-12 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-2xl font-bold text-gray-900 mb-8">Browse by Extension</h2>
+          <h2 className="text-2xl font-bold text-gray-900 mb-2">Browse by Extension</h2>
+          <p className="text-gray-500 mb-8">Find domains by your preferred TLD</p>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
             {SUPPORTED_TLDS.map((tld) => (
               <Link
                 key={tld}
                 href={`/browse?tld=${tld}`}
-                className={`rounded-xl border-2 p-6 text-center transition-all ${TLD_STYLES[tld]}`}
+                className={`rounded-xl border-2 p-6 text-center transition-all hover:scale-105 hover:shadow-lg ${TLD_STYLES[tld]}`}
               >
                 <span className="text-2xl font-bold">.{tld}</span>
               </Link>
@@ -220,39 +232,49 @@ export default async function HomePage() {
       </section>
 
       {/* How It Works Section */}
-      <section className="py-12 md:py-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-2xl font-bold text-gray-900 text-center mb-12">
+      <section className="py-16 md:py-20 relative overflow-hidden">
+        {/* Subtle background pattern */}
+        <div className="absolute inset-0 opacity-[0.02]">
+          <div className="absolute inset-0" style={{
+            backgroundImage: `radial-gradient(circle at 1px 1px, rgb(0,0,0) 1px, transparent 0)`,
+            backgroundSize: '24px 24px',
+          }} />
+        </div>
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h2 className="text-3xl font-bold text-gray-900 text-center mb-4">
             How It Works
           </h2>
+          <p className="text-gray-500 text-center mb-12 max-w-xl mx-auto">
+            Three simple steps to buy or sell domains at a fixed price
+          </p>
           <div className="grid md:grid-cols-3 gap-8">
-            <div className="text-center">
-              <div className="w-14 h-14 bg-primary-100 text-primary-600 rounded-full flex items-center justify-center mx-auto mb-4 text-xl font-bold">
+            <div className="text-center group">
+              <div className="w-16 h-16 bg-gradient-to-br from-primary-500 to-primary-600 text-white rounded-2xl flex items-center justify-center mx-auto mb-5 text-2xl font-bold shadow-lg shadow-primary-500/25 group-hover:scale-110 transition-transform duration-300">
                 1
               </div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">
+              <h3 className="text-xl font-semibold text-gray-900 mb-3">
                 Sellers List
               </h3>
               <p className="text-gray-600">
                 Domain owners list domains they don&apos;t plan to renew. <span className="font-semibold text-green-600">Free to list</span>. We take $2 from the sale.
               </p>
             </div>
-            <div className="text-center">
-              <div className="w-14 h-14 bg-primary-100 text-primary-600 rounded-full flex items-center justify-center mx-auto mb-4 text-xl font-bold">
+            <div className="text-center group">
+              <div className="w-16 h-16 bg-gradient-to-br from-primary-500 to-primary-600 text-white rounded-2xl flex items-center justify-center mx-auto mb-5 text-2xl font-bold shadow-lg shadow-primary-500/25 group-hover:scale-110 transition-transform duration-300">
                 2
               </div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">
+              <h3 className="text-xl font-semibold text-gray-900 mb-3">
                 Buyers Browse
               </h3>
               <p className="text-gray-600">
                 Find domains at a fixed $99 price. No negotiation. No hidden fees. AI helps surface the best picks.
               </p>
             </div>
-            <div className="text-center">
-              <div className="w-14 h-14 bg-primary-100 text-primary-600 rounded-full flex items-center justify-center mx-auto mb-4 text-xl font-bold">
+            <div className="text-center group">
+              <div className="w-16 h-16 bg-gradient-to-br from-primary-500 to-primary-600 text-white rounded-2xl flex items-center justify-center mx-auto mb-5 text-2xl font-bold shadow-lg shadow-primary-500/25 group-hover:scale-110 transition-transform duration-300">
                 3
               </div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">
+              <h3 className="text-xl font-semibold text-gray-900 mb-3">
                 Transfer Complete
               </h3>
               <p className="text-gray-600">
@@ -262,6 +284,9 @@ export default async function HomePage() {
           </div>
         </div>
       </section>
+
+      {/* Testimonials Section */}
+      <Testimonials />
 
       {/* Domain Alerts Signup - Show here too if we have domains (secondary placement) */}
       {hasAnyDomains && (
@@ -273,19 +298,27 @@ export default async function HomePage() {
       )}
 
       {/* CTA Section */}
-      <section className="py-12 md:py-16 bg-gradient-to-br from-primary-600 to-primary-700">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-2xl md:text-3xl font-bold text-white mb-4">
+      <section className="py-16 md:py-20 bg-gradient-to-br from-primary-600 via-primary-700 to-primary-800 relative overflow-hidden">
+        {/* Decorative elements */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <div className="absolute -top-20 -right-20 w-60 h-60 bg-white/5 rounded-full blur-3xl" />
+          <div className="absolute -bottom-20 -left-20 w-80 h-80 bg-primary-400/10 rounded-full blur-3xl" />
+        </div>
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
             Got domains you&apos;re not renewing?
           </h2>
-          <p className="text-primary-100 mb-8 max-w-xl mx-auto">
+          <p className="text-primary-100 text-lg mb-8 max-w-xl mx-auto">
             Turn your expiring domains into cash. <span className="font-semibold text-yellow-300">Free to list</span>, sell for $99.
           </p>
           <Link href="/signup">
-            <Button variant="secondary" size="lg">
+            <Button variant="secondary" size="lg" className="shadow-xl shadow-black/20 hover:shadow-2xl hover:scale-105 transition-all duration-300">
               Start Selling Today
             </Button>
           </Link>
+          <div className="mt-8">
+            <PaymentBadges className="[&>div]:bg-white/10 [&>div]:text-primary-100" />
+          </div>
         </div>
       </section>
     </div>

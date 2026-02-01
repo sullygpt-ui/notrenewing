@@ -1,6 +1,7 @@
 'use client';
 
 import { TrendingUp, Users, ShoppingCart, Sparkles } from 'lucide-react';
+import { AnimatedCounter } from './animated-counter';
 
 interface SocialProofProps {
   soldThisWeek: number;
@@ -23,7 +24,7 @@ export function SocialProof({ soldThisWeek, activeListings, totalSold }: SocialP
           <div className="flex items-center gap-2 text-gray-600">
             <TrendingUp className="w-4 h-4 text-primary-500" />
             <span>
-              <strong className="text-gray-900">{activeListings}</strong> domain{activeListings !== 1 ? 's' : ''} available
+              <strong className="text-gray-900"><AnimatedCounter value={activeListings} /></strong> domain{activeListings !== 1 ? 's' : ''} available
             </span>
           </div>
         )}
@@ -41,21 +42,21 @@ export function SocialProof({ soldThisWeek, activeListings, totalSold }: SocialP
         <div className="flex items-center gap-2 text-gray-600">
           <ShoppingCart className="w-4 h-4 text-green-500" />
           <span>
-            <strong className="text-gray-900">{soldThisWeek}</strong> sold this week
+            <strong className="text-gray-900"><AnimatedCounter value={soldThisWeek} /></strong> sold this week
           </span>
         </div>
       )}
       <div className="flex items-center gap-2 text-gray-600">
         <TrendingUp className="w-4 h-4 text-primary-500" />
         <span>
-          <strong className="text-gray-900">{activeListings}</strong> domain{activeListings !== 1 ? 's' : ''} available
+          <strong className="text-gray-900"><AnimatedCounter value={activeListings} /></strong> domain{activeListings !== 1 ? 's' : ''} available
         </span>
       </div>
       {totalSold > 0 && (
         <div className="flex items-center gap-2 text-gray-600">
           <Users className="w-4 h-4 text-blue-500" />
           <span>
-            <strong className="text-gray-900">{totalSold}</strong> successful transfer{totalSold !== 1 ? 's' : ''}
+            <strong className="text-gray-900"><AnimatedCounter value={totalSold} /></strong> successful transfer{totalSold !== 1 ? 's' : ''}
           </span>
         </div>
       )}
