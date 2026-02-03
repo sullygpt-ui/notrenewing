@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { createClient } from '@/lib/supabase/client';
-import { Button, SearchBar, Logo } from '@/components/ui';
+import { Button, SearchBar, Logo, MagneticButton } from '@/components/ui';
 import type { User } from '@supabase/supabase-js';
 
 export function Header() {
@@ -99,9 +99,11 @@ export function Header() {
                     Sign In
                   </Button>
                 </Link>
-                <Link href="/signup">
-                  <Button size="sm">Sell Domains</Button>
-                </Link>
+                <MagneticButton>
+                  <Link href="/signup">
+                    <Button size="sm">Sell Domains</Button>
+                  </Link>
+                </MagneticButton>
               </>
             )}
           </div>

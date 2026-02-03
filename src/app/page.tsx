@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { Shield, Zap, ArrowRight } from 'lucide-react';
 import { createClient } from '@/lib/supabase/server';
 import { DomainGrid, HeroSearch, FeaturedDomainCard } from '@/components/domain';
-import { Button, Badge, SocialProof, DomainAlertsForm, Testimonials, PaymentBadges, FadeIn, StaggerContainer, StaggerItem, EmptyState, MeshGradient, FloatingBadges } from '@/components/ui';
+import { Button, Badge, SocialProof, DomainAlertsForm, Testimonials, PaymentBadges, FadeIn, StaggerContainer, StaggerItem, EmptyState, MeshGradient, FloatingBadges, MagneticButton } from '@/components/ui';
 import type { Listing } from '@/types/database';
 
 export const dynamic = 'force-dynamic';
@@ -386,12 +386,14 @@ export default async function HomePage() {
             <p className="text-gray-400 text-lg md:text-xl mb-8 max-w-xl mx-auto leading-relaxed">
               Turn your expiring domains into cash. <span className="font-semibold text-amber-300">Free to list</span>, sell for $99.
             </p>
-            <Link href="/signup">
-              <Button variant="secondary" size="lg" className="shadow-xl shadow-black/30 hover:shadow-2xl">
-                Start Selling Today
-                <ArrowRight className="w-5 h-5 ml-2" />
-              </Button>
-            </Link>
+            <MagneticButton>
+              <Link href="/signup">
+                <Button variant="secondary" size="lg" className="shadow-xl shadow-black/30 hover:shadow-2xl">
+                  Start Selling Today
+                  <ArrowRight className="w-5 h-5 ml-2" />
+                </Button>
+              </Link>
+            </MagneticButton>
             <div className="mt-8">
               <PaymentBadges className="[&>div]:bg-white/5 [&>div]:border [&>div]:border-white/10 [&>div]:text-gray-400" />
             </div>

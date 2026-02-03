@@ -39,3 +39,5 @@ export { MeshGradient } from './mesh-gradient';
 export { TiltCard } from './tilt-card';
 
 export { FloatingBadges } from './floating-badges';
+
+export { MagneticButton } from './magnetic-button';
