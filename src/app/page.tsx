@@ -92,50 +92,66 @@ export default async function HomePage() {
       </div>
 
       {/* Hero Section */}
-      <section className="relative bg-gradient-to-br from-primary-600 via-primary-600 to-primary-700 py-16 md:py-24 overflow-hidden">
-        {/* Floating decorative shapes */}
+      <section className="relative bg-[#0a0a1a] py-20 md:py-32 overflow-hidden">
+        {/* Noise texture overlay */}
+        <div 
+          className="absolute inset-0 opacity-[0.4] mix-blend-soft-light pointer-events-none"
+          style={{
+            backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E")`,
+          }}
+        />
+
+        {/* Animated gradient orbs */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          <div className="absolute -top-10 -left-10 w-40 h-40 bg-white/5 rounded-full blur-2xl" />
-          <div className="absolute top-1/4 -right-20 w-60 h-60 bg-primary-400/20 rounded-full blur-3xl" />
-          <div className="absolute -bottom-20 left-1/4 w-80 h-80 bg-primary-800/30 rounded-full blur-3xl" />
-          <div className="absolute top-10 right-1/4 w-4 h-4 bg-yellow-400/60 rounded-full animate-pulse" />
-          <div className="absolute bottom-20 left-10 w-3 h-3 bg-white/40 rounded-full animate-pulse" style={{ animationDelay: '1s' }} />
-          <div className="absolute top-1/3 left-20 w-2 h-2 bg-primary-200/50 rounded-full animate-pulse" style={{ animationDelay: '0.5s' }} />
+          <div className="absolute -top-20 -left-20 w-72 h-72 bg-purple-600/30 rounded-full blur-[100px] animate-[pulse_8s_ease-in-out_infinite]" />
+          <div className="absolute top-1/4 -right-32 w-96 h-96 bg-blue-500/25 rounded-full blur-[120px] animate-[pulse_10s_ease-in-out_infinite_1s]" />
+          <div className="absolute -bottom-32 left-1/4 w-[500px] h-[500px] bg-teal-500/20 rounded-full blur-[150px] animate-[pulse_12s_ease-in-out_infinite_2s]" />
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-indigo-600/15 rounded-full blur-[180px] animate-[pulse_15s_ease-in-out_infinite]" />
+          
+          {/* Floating accent dots */}
+          <div className="absolute top-16 right-1/4 w-3 h-3 bg-yellow-400 rounded-full animate-[bounce_3s_ease-in-out_infinite] shadow-lg shadow-yellow-400/50" />
+          <div className="absolute bottom-24 left-16 w-2 h-2 bg-teal-400 rounded-full animate-[bounce_4s_ease-in-out_infinite_0.5s] shadow-lg shadow-teal-400/50" />
+          <div className="absolute top-1/3 left-24 w-2 h-2 bg-purple-400 rounded-full animate-[bounce_3.5s_ease-in-out_infinite_1s] shadow-lg shadow-purple-400/50" />
+          <div className="absolute top-1/4 right-16 w-1.5 h-1.5 bg-blue-400 rounded-full animate-[bounce_5s_ease-in-out_infinite_1.5s] shadow-lg shadow-blue-400/50" />
         </div>
 
-        {/* Grid pattern overlay */}
+        {/* Subtle grid pattern */}
         <div className="absolute inset-0 opacity-[0.03]">
           <div className="absolute inset-0" style={{
-            backgroundImage: `url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 0h40v40H0V0zm1 1v38h38V1H1z' fill='%23ffffff' fill-opacity='1'/%3E%3C/svg%3E")`,
+            backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 0h60v60H0V0zm1 1v58h58V1H1z' fill='%23ffffff' fill-opacity='1'/%3E%3C/svg%3E")`,
           }} />
         </div>
         
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h1 className="text-4xl md:text-6xl font-bold text-white mb-4 tracking-tight">
+          <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold text-white mb-6 tracking-tight leading-[0.9]">
             Domains You Won&apos;t Renew.
             <br />
-            <span className="bg-gradient-to-r from-yellow-300 via-amber-200 to-yellow-400 bg-clip-text text-transparent">
+            <span className="bg-gradient-to-r from-yellow-300 via-amber-200 to-yellow-400 bg-clip-text text-transparent drop-shadow-[0_0_30px_rgba(251,191,36,0.3)]">
               Buyers Who Will.
             </span>
           </h1>
-          <p className="text-primary-100 text-lg md:text-xl mb-10 max-w-2xl mx-auto">
-            Every domain is <span className="font-bold text-white bg-white/10 px-2 py-0.5 rounded">$99</span>. No negotiation. No hassle.
+          <p className="text-gray-400 text-lg md:text-2xl mb-12 max-w-2xl mx-auto font-light">
+            Every domain is <span className="font-bold text-white bg-white/10 px-3 py-1 rounded-lg border border-white/10">$99</span>. No negotiation. No hassle.
           </p>
-          <HeroSearch />
           
-          {/* Trust signals */}
-          <div className="flex flex-wrap items-center justify-center gap-4 mt-10 text-sm text-primary-200">
-            <div className="flex items-center gap-1.5 bg-white/10 px-3 py-1.5 rounded-full backdrop-blur-sm">
-              <Shield className="w-4 h-4" />
+          {/* Glassmorphism search wrapper */}
+          <div className="max-w-xl mx-auto bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-3 shadow-2xl shadow-black/20">
+            <HeroSearch />
+          </div>
+          
+          {/* Glassmorphism trust signals */}
+          <div className="flex flex-wrap items-center justify-center gap-3 mt-12 text-sm">
+            <div className="flex items-center gap-2 bg-white/5 backdrop-blur-xl border border-white/10 px-4 py-2 rounded-full text-gray-300 hover:bg-white/10 hover:border-white/20 transition-all duration-300">
+              <Shield className="w-4 h-4 text-teal-400" />
               <span>Secure transfers via Stripe</span>
             </div>
-            <div className="flex items-center gap-1.5 bg-white/10 px-3 py-1.5 rounded-full backdrop-blur-sm">
-              <Zap className="w-4 h-4" />
+            <div className="flex items-center gap-2 bg-white/5 backdrop-blur-xl border border-white/10 px-4 py-2 rounded-full text-gray-300 hover:bg-white/10 hover:border-white/20 transition-all duration-300">
+              <Zap className="w-4 h-4 text-yellow-400" />
               <span>AI-powered domain scoring</span>
             </div>
-            <div className="flex items-center gap-1.5 bg-white/10 px-3 py-1.5 rounded-full backdrop-blur-sm">
+            <div className="flex items-center gap-2 bg-white/5 backdrop-blur-xl border border-white/10 px-4 py-2 rounded-full text-gray-300 hover:bg-white/10 hover:border-white/20 transition-all duration-300">
               <span>From</span>
-              <Link href="https://sullysblog.com" className="font-semibold text-white hover:underline">
+              <Link href="https://sullysblog.com" className="font-semibold text-white hover:text-yellow-300 transition-colors">
                 SullysBlog.com
               </Link>
             </div>
