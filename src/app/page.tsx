@@ -92,7 +92,7 @@ export default async function HomePage() {
       </div>
 
       {/* Hero Section */}
-      <section className="relative bg-[#0a0a1a] py-20 md:py-32 overflow-hidden">
+      <section className="relative bg-[#0a0a1a] py-12 md:py-16 overflow-hidden">
         {/* Noise texture overlay */}
         <div 
           className="absolute inset-0 opacity-[0.4] mix-blend-soft-light pointer-events-none"
@@ -104,15 +104,13 @@ export default async function HomePage() {
         {/* Animated gradient orbs */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
           <div className="absolute -top-20 -left-20 w-72 h-72 bg-purple-600/30 rounded-full blur-[100px] animate-[pulse_8s_ease-in-out_infinite]" />
-          <div className="absolute top-1/4 -right-32 w-96 h-96 bg-blue-500/25 rounded-full blur-[120px] animate-[pulse_10s_ease-in-out_infinite_1s]" />
-          <div className="absolute -bottom-32 left-1/4 w-[500px] h-[500px] bg-teal-500/20 rounded-full blur-[150px] animate-[pulse_12s_ease-in-out_infinite_2s]" />
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-indigo-600/15 rounded-full blur-[180px] animate-[pulse_15s_ease-in-out_infinite]" />
+          <div className="absolute top-1/4 -right-32 w-80 h-80 bg-blue-500/25 rounded-full blur-[120px] animate-[pulse_10s_ease-in-out_infinite_1s]" />
+          <div className="absolute -bottom-20 left-1/4 w-96 h-96 bg-teal-500/20 rounded-full blur-[150px] animate-[pulse_12s_ease-in-out_infinite_2s]" />
           
           {/* Floating accent dots */}
-          <div className="absolute top-16 right-1/4 w-3 h-3 bg-yellow-400 rounded-full animate-[bounce_3s_ease-in-out_infinite] shadow-lg shadow-yellow-400/50" />
-          <div className="absolute bottom-24 left-16 w-2 h-2 bg-teal-400 rounded-full animate-[bounce_4s_ease-in-out_infinite_0.5s] shadow-lg shadow-teal-400/50" />
-          <div className="absolute top-1/3 left-24 w-2 h-2 bg-purple-400 rounded-full animate-[bounce_3.5s_ease-in-out_infinite_1s] shadow-lg shadow-purple-400/50" />
-          <div className="absolute top-1/4 right-16 w-1.5 h-1.5 bg-blue-400 rounded-full animate-[bounce_5s_ease-in-out_infinite_1.5s] shadow-lg shadow-blue-400/50" />
+          <div className="absolute top-12 right-1/4 w-2 h-2 bg-yellow-400 rounded-full animate-[bounce_3s_ease-in-out_infinite] shadow-lg shadow-yellow-400/50" />
+          <div className="absolute bottom-16 left-16 w-1.5 h-1.5 bg-teal-400 rounded-full animate-[bounce_4s_ease-in-out_infinite_0.5s] shadow-lg shadow-teal-400/50" />
+          <div className="absolute top-1/3 left-20 w-1.5 h-1.5 bg-purple-400 rounded-full animate-[bounce_3.5s_ease-in-out_infinite_1s] shadow-lg shadow-purple-400/50" />
         </div>
 
         {/* Subtle grid pattern */}
@@ -123,33 +121,33 @@ export default async function HomePage() {
         </div>
         
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold text-white mb-6 tracking-tight leading-[0.9]">
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-4 tracking-tight leading-[0.95]">
             Domains You Won&apos;t Renew.
             <br />
             <span className="bg-gradient-to-r from-yellow-300 via-amber-200 to-yellow-400 bg-clip-text text-transparent drop-shadow-[0_0_30px_rgba(251,191,36,0.3)]">
               Buyers Who Will.
             </span>
           </h1>
-          <p className="text-gray-400 text-lg md:text-2xl mb-12 max-w-2xl mx-auto font-light">
-            Every domain is <span className="font-bold text-white bg-white/10 px-3 py-1 rounded-lg border border-white/10">$99</span>. No negotiation. No hassle.
+          <p className="text-gray-400 text-base md:text-lg mb-8 max-w-2xl mx-auto font-light">
+            Every domain is <span className="font-bold text-white bg-white/10 px-2 py-0.5 rounded-md border border-white/10">$99</span>. No negotiation. No hassle.
           </p>
           
           {/* Glassmorphism search wrapper */}
-          <div className="max-w-xl mx-auto bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-3 shadow-2xl shadow-black/20">
+          <div className="max-w-xl mx-auto bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-2.5 shadow-2xl shadow-black/20">
             <HeroSearch />
           </div>
           
           {/* Glassmorphism trust signals */}
-          <div className="flex flex-wrap items-center justify-center gap-3 mt-12 text-sm">
-            <div className="flex items-center gap-2 bg-white/5 backdrop-blur-xl border border-white/10 px-4 py-2 rounded-full text-gray-300 hover:bg-white/10 hover:border-white/20 transition-all duration-300">
-              <Shield className="w-4 h-4 text-teal-400" />
-              <span>Secure transfers via Stripe</span>
+          <div className="flex flex-wrap items-center justify-center gap-2 mt-8 text-xs md:text-sm">
+            <div className="flex items-center gap-1.5 bg-white/5 backdrop-blur-xl border border-white/10 px-3 py-1.5 rounded-full text-gray-300 hover:bg-white/10 hover:border-white/20 transition-all duration-300">
+              <Shield className="w-3.5 h-3.5 text-teal-400" />
+              <span>Secure transfers</span>
             </div>
-            <div className="flex items-center gap-2 bg-white/5 backdrop-blur-xl border border-white/10 px-4 py-2 rounded-full text-gray-300 hover:bg-white/10 hover:border-white/20 transition-all duration-300">
-              <Zap className="w-4 h-4 text-yellow-400" />
-              <span>AI-powered domain scoring</span>
+            <div className="flex items-center gap-1.5 bg-white/5 backdrop-blur-xl border border-white/10 px-3 py-1.5 rounded-full text-gray-300 hover:bg-white/10 hover:border-white/20 transition-all duration-300">
+              <Zap className="w-3.5 h-3.5 text-yellow-400" />
+              <span>AI-powered scoring</span>
             </div>
-            <div className="flex items-center gap-2 bg-white/5 backdrop-blur-xl border border-white/10 px-4 py-2 rounded-full text-gray-300 hover:bg-white/10 hover:border-white/20 transition-all duration-300">
+            <div className="flex items-center gap-1.5 bg-white/5 backdrop-blur-xl border border-white/10 px-3 py-1.5 rounded-full text-gray-300 hover:bg-white/10 hover:border-white/20 transition-all duration-300">
               <span>From</span>
               <Link href="https://sullysblog.com" className="font-semibold text-white hover:text-yellow-300 transition-colors">
                 SullysBlog.com
@@ -314,17 +312,25 @@ export default async function HomePage() {
       )}
 
       {/* CTA Section */}
-      <section className="py-16 md:py-20 bg-gradient-to-br from-primary-600 via-primary-700 to-primary-800 relative overflow-hidden">
-        {/* Decorative elements */}
+      <section className="relative bg-[#0a0a1a] py-14 md:py-16 overflow-hidden">
+        {/* Noise texture overlay */}
+        <div 
+          className="absolute inset-0 opacity-[0.4] mix-blend-soft-light pointer-events-none"
+          style={{
+            backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E")`,
+          }}
+        />
+        {/* Animated gradient orbs */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          <div className="absolute -top-20 -right-20 w-60 h-60 bg-white/5 rounded-full blur-3xl" />
-          <div className="absolute -bottom-20 -left-20 w-80 h-80 bg-primary-400/10 rounded-full blur-3xl" />
+          <div className="absolute -top-20 -right-20 w-72 h-72 bg-purple-600/25 rounded-full blur-[100px] animate-[pulse_10s_ease-in-out_infinite]" />
+          <div className="absolute -bottom-20 -left-20 w-80 h-80 bg-teal-500/20 rounded-full blur-[120px] animate-[pulse_12s_ease-in-out_infinite_1s]" />
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-blue-500/15 rounded-full blur-[150px] animate-[pulse_8s_ease-in-out_infinite]" />
         </div>
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
+          <h2 className="text-2xl md:text-3xl font-bold text-white mb-3">
             Got domains you&apos;re not renewing?
           </h2>
-          <p className="text-primary-100 text-lg mb-8 max-w-xl mx-auto">
+          <p className="text-gray-400 text-base md:text-lg mb-6 max-w-xl mx-auto">
             Turn your expiring domains into cash. <span className="font-semibold text-yellow-300">Free to list</span>, sell for $99.
           </p>
           <Link href="/signup">
@@ -332,8 +338,8 @@ export default async function HomePage() {
               Start Selling Today
             </Button>
           </Link>
-          <div className="mt-8">
-            <PaymentBadges className="[&>div]:bg-white/10 [&>div]:text-primary-100" />
+          <div className="mt-6">
+            <PaymentBadges className="[&>div]:bg-white/5 [&>div]:border [&>div]:border-white/10 [&>div]:text-gray-400" />
           </div>
         </div>
       </section>
