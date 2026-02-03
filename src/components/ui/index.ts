@@ -33,3 +33,7 @@ export { Tooltip } from './tooltip';
 export { FadeIn, StaggerContainer, StaggerItem, ScaleIn } from './motion';
 
 export { EmptyState } from './empty-state';
+
+export { MeshGradient } from './mesh-gradient';
+
+export { TiltCard } from './tilt-card';

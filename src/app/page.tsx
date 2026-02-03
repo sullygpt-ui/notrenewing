@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { Shield, Zap, ArrowRight } from 'lucide-react';
 import { createClient } from '@/lib/supabase/server';
 import { DomainGrid, HeroSearch, FeaturedDomainCard } from '@/components/domain';
-import { Button, Badge, SocialProof, DomainAlertsForm, Testimonials, PaymentBadges, FadeIn, StaggerContainer, StaggerItem, EmptyState } from '@/components/ui';
+import { Button, Badge, SocialProof, DomainAlertsForm, Testimonials, PaymentBadges, FadeIn, StaggerContainer, StaggerItem, EmptyState, MeshGradient } from '@/components/ui';
 import type { Listing } from '@/types/database';
 
 export const dynamic = 'force-dynamic';
@@ -112,24 +112,12 @@ export default async function HomePage() {
       </div>
 
       {/* Hero Section */}
-      <section className="relative bg-gradient-to-b from-[#0c0a1d] via-[#0f0d24] to-[#13102b] py-16 md:py-24 overflow-hidden">
-        {/* Refined noise texture */}
-        <div 
-          className="absolute inset-0 opacity-30 mix-blend-soft-light pointer-events-none"
-          style={{
-            backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E")`,
-          }}
-        />
-
-        {/* Animated gradient orbs - more refined */}
-        <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          <div className="absolute -top-32 -left-32 w-96 h-96 bg-primary-600/20 rounded-full blur-[120px] animate-[pulse_10s_ease-in-out_infinite]" />
-          <div className="absolute top-1/4 -right-48 w-[500px] h-[500px] bg-violet-500/15 rounded-full blur-[150px] animate-[pulse_12s_ease-in-out_infinite_1s]" />
-          <div className="absolute -bottom-32 left-1/4 w-[600px] h-[600px] bg-cyan-500/10 rounded-full blur-[180px] animate-[pulse_14s_ease-in-out_infinite_2s]" />
-        </div>
-
-        {/* Subtle grid pattern */}
-        <div className="absolute inset-0 opacity-[0.03]">
+      <section className="relative py-16 md:py-24 overflow-hidden">
+        {/* Animated Mesh Gradient Background */}
+        <MeshGradient />
+        
+        {/* Subtle grid pattern overlay */}
+        <div className="absolute inset-0 opacity-[0.03] pointer-events-none">
           <div className="absolute inset-0" style={{
             backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 0h60v60H0V0zm1 1v58h58V1H1z' fill='%23ffffff' fill-opacity='1'/%3E%3C/svg%3E")`,
           }} />

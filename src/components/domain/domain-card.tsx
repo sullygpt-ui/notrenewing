@@ -2,8 +2,7 @@
 
 import Link from 'next/link';
 import { Clock, Flame, Star, Calendar, Sparkles } from 'lucide-react';
-import { motion } from 'framer-motion';
-import { Badge, Tooltip } from '@/components/ui';
+import { Badge, Tooltip, TiltCard } from '@/components/ui';
 import { WatchlistButton } from './watchlist-button';
 import { LikeButton } from './like-button';
 import type { Listing } from '@/types/database';
@@ -74,11 +73,7 @@ export function DomainCard({ listing, isSponsored = false, isWatched = false, sh
 
   return (
     <Link href={`/domain/${listing.domain_name}`}>
-      <motion.div 
-        className="group relative"
-        whileHover={{ y: -4 }}
-        transition={{ duration: 0.2, ease: [0.25, 0.4, 0.25, 1] }}
-      >
+      <TiltCard className="group relative" tiltAmount={8} scale={1.02}>
         {/* Gradient border on hover */}
         <div className="absolute -inset-[1px] bg-gradient-to-r from-primary-400 via-violet-400 to-primary-400 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 blur-[1px]" />
         
@@ -194,7 +189,7 @@ export function DomainCard({ listing, isSponsored = false, isWatched = false, sh
             </div>
           </div>
         </div>
-      </motion.div>
+      </TiltCard>
     </Link>
   );
 }
