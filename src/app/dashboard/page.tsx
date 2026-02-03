@@ -1,5 +1,6 @@
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
+import { ThumbsUp } from 'lucide-react';
 import { createClient } from '@/lib/supabase/server';
 import { Card, CardHeader, CardTitle, CardContent, Button, Badge } from '@/components/ui';
 import { ListingFilters } from '@/components/domain';
@@ -77,6 +78,7 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
     : sortedListings;
 
   const totalEarnings = soldListings.length * 9583; // $95.83 per sale in cents
+  const totalLikes = listings.reduce((sum, l) => sum + (l.like_count ?? 0), 0);
 
   const filterCounts = {
     all: listings.length,
@@ -99,7 +101,7 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
       </div>
 
       {/* Stats Grid */}
-      <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8">
+      <div className="grid grid-cols-2 md:grid-cols-6 gap-4 mb-8">
         <Link href="/dashboard?status=active">
           <Card className={`cursor-pointer hover:border-primary-300 hover:shadow-md transition-all ${statusFilter === 'active' ? 'border-primary-500 ring-2 ring-primary-200' : ''}`}>
             <CardContent>
@@ -136,6 +138,14 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
           <CardContent>
             <p className="text-sm text-gray-500">Total Earnings</p>
             <p className="text-3xl font-bold text-gray-900">${(totalEarnings / 100).toFixed(2)}</p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent>
+            <p className="text-sm text-gray-500 flex items-center gap-1">
+              <ThumbsUp className="w-3.5 h-3.5" /> Total Likes
+            </p>
+            <p className="text-3xl font-bold text-primary-600">{totalLikes}</p>
           </CardContent>
         </Card>
       </div>
@@ -264,6 +274,12 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
                         <span className="inline-flex items-center gap-1 truncate max-w-[200px]">
                           <span className="text-gray-400">Reg:</span> 
                           <span className="truncate">{listing.registrar}</span>
+                        </span>
+                      )}
+                      {(listing.like_count ?? 0) > 0 && (
+                        <span className="inline-flex items-center gap-1 text-primary-600 font-medium">
+                          <ThumbsUp className="w-3 h-3" />
+                          {listing.like_count} {listing.like_count === 1 ? 'like' : 'likes'}
                         </span>
                       )}
                     </div>

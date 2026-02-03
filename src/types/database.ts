@@ -43,6 +43,16 @@ export interface Listing {
   category: string | null;
   listed_at: string | null;
   expires_at: string | null;
+  like_count: number;
+  created_at: string;
+}
+
+export interface DomainLike {
+  id: string;
+  listing_id: string;
+  user_id: string | null;
+  session_id: string | null;
+  ip_hash: string | null;
   created_at: string;
 }
 

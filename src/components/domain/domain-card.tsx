@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { Clock, Flame, Star, Calendar, Sparkles } from 'lucide-react';
 import { Badge, Tooltip } from '@/components/ui';
 import { WatchlistButton } from './watchlist-button';
+import { LikeButton } from './like-button';
 import type { Listing } from '@/types/database';
 
 interface DomainCardProps {
@@ -9,6 +10,7 @@ interface DomainCardProps {
   isSponsored?: boolean;
   isWatched?: boolean;
   showWatchlistButton?: boolean;
+  showLikeButton?: boolean;
 }
 
 // TLD color mapping for visual differentiation
@@ -31,7 +33,7 @@ const AI_TIERS: Record<string, { label: string; color: string; stars: number }> 
   C: { label: 'C-Tier', color: 'text-gray-500', stars: 2 },
 };
 
-export function DomainCard({ listing, isSponsored = false, isWatched = false, showWatchlistButton = false }: DomainCardProps) {
+export function DomainCard({ listing, isSponsored = false, isWatched = false, showWatchlistButton = false, showLikeButton = true }: DomainCardProps) {
 
   const getExpirationInfo = (date: string | null) => {
     if (!date) return null;
@@ -157,6 +159,13 @@ export function DomainCard({ listing, isSponsored = false, isWatched = false, sh
                   ) : null}
                   {expirationInfo.text}
                 </span>
+              )}
+              {showLikeButton && (
+                <LikeButton 
+                  listingId={listing.id} 
+                  initialLikeCount={listing.like_count || 0}
+                  size="sm"
+                />
               )}
             </div>
           </div>
