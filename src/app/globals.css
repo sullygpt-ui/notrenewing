@@ -18,8 +18,9 @@
   --color-accent-gold: #f59e0b;
   --color-accent-gold-light: #fbbf24;
   
-  /* Font */
+  /* Fonts */
   --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-display), ui-sans-serif, system-ui, sans-serif;
 }
 
 :root {
@@ -40,8 +41,14 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Premium heading styles */
-h1, h2, h3, h4, h5, h6 {
+/* Premium heading styles with display font */
+h1, h2, h3 {
+  font-family: var(--font-display);
+  letter-spacing: -0.03em;
+  font-weight: 700;
+}
+
+h4, h5, h6 {
   letter-spacing: -0.025em;
   font-weight: 600;
 }

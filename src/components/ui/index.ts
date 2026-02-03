@@ -37,3 +37,5 @@ export { EmptyState } from './empty-state';
 export { MeshGradient } from './mesh-gradient';
 
 export { TiltCard } from './tilt-card';
+
+export { FloatingBadges } from './floating-badges';

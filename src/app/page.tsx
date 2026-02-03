@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { Shield, Zap, ArrowRight } from 'lucide-react';
 import { createClient } from '@/lib/supabase/server';
 import { DomainGrid, HeroSearch, FeaturedDomainCard } from '@/components/domain';
-import { Button, Badge, SocialProof, DomainAlertsForm, Testimonials, PaymentBadges, FadeIn, StaggerContainer, StaggerItem, EmptyState, MeshGradient } from '@/components/ui';
+import { Button, Badge, SocialProof, DomainAlertsForm, Testimonials, PaymentBadges, FadeIn, StaggerContainer, StaggerItem, EmptyState, MeshGradient, FloatingBadges } from '@/components/ui';
 import type { Listing } from '@/types/database';
 
 export const dynamic = 'force-dynamic';
@@ -115,6 +115,9 @@ export default async function HomePage() {
       <section className="relative py-16 md:py-24 overflow-hidden">
         {/* Animated Mesh Gradient Background */}
         <MeshGradient />
+        
+        {/* Floating domain badges */}
+        <FloatingBadges />
         
         {/* Subtle grid pattern overlay */}
         <div className="absolute inset-0 opacity-[0.03] pointer-events-none">
