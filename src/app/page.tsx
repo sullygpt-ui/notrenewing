@@ -1,8 +1,8 @@
 import Link from 'next/link';
 import { Shield, Zap, ArrowRight } from 'lucide-react';
 import { createClient } from '@/lib/supabase/server';
-import { DomainGrid, HeroSearch } from '@/components/domain';
-import { Button, Badge, SocialProof, DomainAlertsForm, Testimonials, PaymentBadges } from '@/components/ui';
+import { DomainGrid, HeroSearch, FeaturedDomainCard } from '@/components/domain';
+import { Button, Badge, SocialProof, DomainAlertsForm, Testimonials, PaymentBadges, FadeIn, StaggerContainer, StaggerItem, EmptyState } from '@/components/ui';
 import type { Listing } from '@/types/database';
 
 export const dynamic = 'force-dynamic';
@@ -42,8 +42,20 @@ export default async function HomePage() {
     .select('*', { count: 'exact', head: true })
     .eq('transfer_status', 'completed');
 
-  // Fetch top AI-scored domains for leaderboard
-  const { data: leaderboardData } = await supabase
+  // Fetch featured domain (highest AI score with reasoning)
+  const { data: featuredData } = await supabase
+    .from('listings')
+    .select('*')
+    .eq('status', 'active')
+    .eq('admin_hidden', false)
+    .eq('is_sponsored', false)
+    .not('ai_reasoning', 'is', null)
+    .order('ai_score', { ascending: false })
+    .limit(1);
+
+  // Fetch top AI-scored domains for leaderboard (excluding featured)
+  const featuredId = featuredData?.[0]?.id;
+  let leaderboardQuery = supabase
     .from('listings')
     .select('*')
     .eq('status', 'active')
@@ -51,6 +63,12 @@ export default async function HomePage() {
     .eq('is_sponsored', false)
     .order('ai_score', { ascending: false })
     .limit(12);
+  
+  if (featuredId) {
+    leaderboardQuery = leaderboardQuery.neq('id', featuredId);
+  }
+  
+  const { data: leaderboardData } = await leaderboardQuery;
 
   // Fetch sponsored domains
   const { data: sponsoredData } = await supabase
@@ -70,15 +88,17 @@ export default async function HomePage() {
     .order('listed_at', { ascending: false })
     .limit(8);
 
+  const featuredDomain = featuredData?.[0] as Listing | undefined;
   const leaderboardDomains = (leaderboardData || []) as Listing[];
   const sponsoredDomains = (sponsoredData || []) as Listing[];
   const recentDomains = (recentData || []) as Listing[];
   
   // Check if we have any domains to show
+  const hasFeaturedDomain = !!featuredDomain;
   const hasLeaderboardDomains = leaderboardDomains.length > 0;
   const hasRecentDomains = recentDomains.length > 0;
   const hasSponsoredDomains = sponsoredDomains.length > 0;
-  const hasAnyDomains = hasLeaderboardDomains || hasRecentDomains;
+  const hasAnyDomains = hasFeaturedDomain || hasLeaderboardDomains || hasRecentDomains;
 
   return (
     <div className="bg-gray-50">
@@ -116,43 +136,52 @@ export default async function HomePage() {
         </div>
         
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6 tracking-tight leading-[1.1]">
-            Domains You Won&apos;t Renew.
-            <br />
-            <span className="bg-gradient-to-r from-amber-200 via-yellow-300 to-amber-200 bg-clip-text text-transparent">
-              Buyers Who Will.
-            </span>
-          </h1>
-          <p className="text-gray-400 text-lg md:text-xl mb-10 max-w-2xl mx-auto font-light leading-relaxed">
-            Every domain is{' '}
-            <span className="font-semibold text-white bg-white/10 px-3 py-1 rounded-lg border border-white/10">
-              $99
-            </span>
-            {' '}— no negotiation, no hassle.
-          </p>
+          <FadeIn>
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6 tracking-tight leading-[1.1]">
+              Domains You Won&apos;t Renew.
+              <br />
+              <span className="bg-gradient-to-r from-amber-200 via-yellow-300 to-amber-200 bg-clip-text text-transparent">
+                Buyers Who Will.
+              </span>
+            </h1>
+          </FadeIn>
+          
+          <FadeIn delay={0.1}>
+            <p className="text-gray-400 text-lg md:text-xl mb-10 max-w-2xl mx-auto font-light leading-relaxed">
+              Every domain is{' '}
+              <span className="font-semibold text-white bg-white/10 px-3 py-1 rounded-lg border border-white/10">
+                $99
+              </span>
+              {' '}— no negotiation, no hassle.
+            </p>
+          </FadeIn>
           
           {/* Glassmorphism search wrapper */}
-          <div className="max-w-xl mx-auto bg-white/[0.08] backdrop-blur-2xl border border-white/10 rounded-2xl p-3 shadow-2xl shadow-black/30 ring-1 ring-white/5">
-            <HeroSearch />
-          </div>
+          <FadeIn delay={0.2}>
+            <div className="max-w-xl mx-auto bg-white/[0.08] backdrop-blur-2xl border border-white/10 rounded-2xl p-3 shadow-2xl shadow-black/30 ring-1 ring-white/5">
+              <HeroSearch />
+            </div>
+          </FadeIn>
           
           {/* Trust signals */}
-          <div className="flex flex-wrap items-center justify-center gap-3 mt-10 text-sm">
-            <div className="flex items-center gap-2 bg-white/[0.06] backdrop-blur-xl border border-white/10 px-4 py-2 rounded-full text-gray-300 hover:bg-white/10 hover:border-white/20 transition-all duration-300">
-              <Shield className="w-4 h-4 text-emerald-400" />
-              <span>Secure transfers</span>
+          <FadeIn delay={0.3}>
+            <div className="flex flex-wrap items-center justify-center gap-3 mt-10 text-sm">
+              <div className="flex items-center gap-2 bg-white/[0.06] backdrop-blur-xl border border-white/10 px-4 py-2 rounded-full text-gray-300 hover:bg-white/10 hover:border-white/20 transition-all duration-300">
+                <Shield className="w-4 h-4 text-emerald-400" />
+                <span>Secure transfers</span>
+              </div>
+              <div className="flex items-center gap-2 bg-white/[0.06] backdrop-blur-xl border border-white/10 px-4 py-2 rounded-full text-gray-300 hover:bg-white/10 hover:border-white/20 transition-all duration-300">
+                <Zap className="w-4 h-4 text-amber-400" />
+                <span>AI-powered scoring</span>
+              </div>
+              <div className="flex items-center gap-2 bg-white/[0.06] backdrop-blur-xl border border-white/10 px-4 py-2 rounded-full text-gray-300 hover:bg-white/10 hover:border-white/20 transition-all duration-300">
+                <span>From</span>
+                <Link href="https://sullysblog.com" className="font-semibold text-white hover:text-amber-300 transition-colors">
+                  SullysBlog.com
+                </Link>
+              </div>
             </div>
-            <div className="flex items-center gap-2 bg-white/[0.06] backdrop-blur-xl border border-white/10 px-4 py-2 rounded-full text-gray-300 hover:bg-white/10 hover:border-white/20 transition-all duration-300">
-              <Zap className="w-4 h-4 text-amber-400" />
-              <span>AI-powered scoring</span>
-            </div>
-            <div className="flex items-center gap-2 bg-white/[0.06] backdrop-blur-xl border border-white/10 px-4 py-2 rounded-full text-gray-300 hover:bg-white/10 hover:border-white/20 transition-all duration-300">
-              <span>From</span>
-              <Link href="https://sullysblog.com" className="font-semibold text-white hover:text-amber-300 transition-colors">
-                SullysBlog.com
-              </Link>
-            </div>
-          </div>
+          </FadeIn>
         </div>
       </section>
 
@@ -167,11 +196,25 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* Domain Alerts Signup - Show prominently when inventory is low */}
+      {/* Empty State - Show when no domains */}
       {!hasAnyDomains && (
         <section className="py-16 md:py-20">
           <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
-            <DomainAlertsForm />
+            <EmptyState variant="no-domains" />
+            <div id="alerts" className="mt-12">
+              <DomainAlertsForm />
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* Featured Domain - Only show if we have one */}
+      {hasFeaturedDomain && (
+        <section className="py-16 md:py-20">
+          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            <FadeIn>
+              <FeaturedDomainCard listing={featuredDomain} />
+            </FadeIn>
           </div>
         </section>
       )}
@@ -180,19 +223,29 @@ export default async function HomePage() {
       {hasLeaderboardDomains && (
         <section className="py-16 md:py-20">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex items-center justify-between mb-10">
-              <div>
-                <h2 className="text-2xl md:text-3xl font-bold text-gray-900 tracking-tight">Leaderboard</h2>
-                <p className="text-gray-500 mt-2">Domains with the highest buyer interest</p>
+            <FadeIn>
+              <div className="flex items-center justify-between mb-10">
+                <div>
+                  <h2 className="text-2xl md:text-3xl font-bold text-gray-900 tracking-tight">Leaderboard</h2>
+                  <p className="text-gray-500 mt-2">Domains with the highest buyer interest</p>
+                </div>
+                <Link href="/browse">
+                  <Button variant="ghost" className="group">
+                    View All
+                    <ArrowRight className="w-4 h-4 ml-1 group-hover:translate-x-0.5 transition-transform" />
+                  </Button>
+                </Link>
               </div>
-              <Link href="/browse">
-                <Button variant="ghost" className="group">
-                  View All
-                  <ArrowRight className="w-4 h-4 ml-1 group-hover:translate-x-0.5 transition-transform" />
-                </Button>
-              </Link>
-            </div>
-            <DomainGrid listings={leaderboardDomains} />
+            </FadeIn>
+            <StaggerContainer className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4" staggerDelay={0.05}>
+              {leaderboardDomains.map((listing) => (
+                <StaggerItem key={listing.id}>
+                  <div className="h-full">
+                    <DomainCardWrapper listing={listing} />
+                  </div>
+                </StaggerItem>
+              ))}
+            </StaggerContainer>
           </div>
         </section>
       )}
@@ -201,10 +254,12 @@ export default async function HomePage() {
       {hasSponsoredDomains && (
         <section className="py-16 bg-white border-y border-gray-200/60">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex items-center gap-3 mb-10">
-              <h2 className="text-xl font-bold text-gray-900 tracking-tight">Sponsored</h2>
-              <Badge variant="warning">Ad</Badge>
-            </div>
+            <FadeIn>
+              <div className="flex items-center gap-3 mb-10">
+                <h2 className="text-xl font-bold text-gray-900 tracking-tight">Sponsored</h2>
+                <Badge variant="warning">Ad</Badge>
+              </div>
+            </FadeIn>
             <DomainGrid listings={sponsoredDomains} />
           </div>
         </section>
@@ -214,18 +269,20 @@ export default async function HomePage() {
       {hasRecentDomains && (
         <section className="py-16 md:py-20">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex items-center justify-between mb-10">
-              <div>
-                <h2 className="text-2xl md:text-3xl font-bold text-gray-900 tracking-tight">Recently Listed</h2>
-                <p className="text-gray-500 mt-2">Fresh domains just added to the marketplace</p>
+            <FadeIn>
+              <div className="flex items-center justify-between mb-10">
+                <div>
+                  <h2 className="text-2xl md:text-3xl font-bold text-gray-900 tracking-tight">Recently Listed</h2>
+                  <p className="text-gray-500 mt-2">Fresh domains just added to the marketplace</p>
+                </div>
+                <Link href="/browse?sort=newest">
+                  <Button variant="ghost" className="group">
+                    View All
+                    <ArrowRight className="w-4 h-4 ml-1 group-hover:translate-x-0.5 transition-transform" />
+                  </Button>
+                </Link>
               </div>
-              <Link href="/browse?sort=newest">
-                <Button variant="ghost" className="group">
-                  View All
-                  <ArrowRight className="w-4 h-4 ml-1 group-hover:translate-x-0.5 transition-transform" />
-                </Button>
-              </Link>
-            </div>
+            </FadeIn>
             <DomainGrid listings={recentDomains} />
           </div>
         </section>
@@ -234,19 +291,22 @@ export default async function HomePage() {
       {/* Browse by TLD Section */}
       <section className="py-16 bg-white border-y border-gray-200/60">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-3 tracking-tight">Browse by Extension</h2>
-          <p className="text-gray-500 mb-10">Find domains by your preferred TLD</p>
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
+          <FadeIn>
+            <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-3 tracking-tight">Browse by Extension</h2>
+            <p className="text-gray-500 mb-10">Find domains by your preferred TLD</p>
+          </FadeIn>
+          <StaggerContainer className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4" staggerDelay={0.05}>
             {SUPPORTED_TLDS.map((tld) => (
-              <Link
-                key={tld}
-                href={`/browse?tld=${tld}`}
-                className={`rounded-2xl border-2 p-6 text-center transition-all duration-300 hover:scale-[1.02] hover:-translate-y-0.5 ${TLD_STYLES[tld]}`}
-              >
-                <span className="text-2xl font-bold">.{tld}</span>
-              </Link>
+              <StaggerItem key={tld}>
+                <Link
+                  href={`/browse?tld=${tld}`}
+                  className={`block rounded-2xl border-2 p-6 text-center transition-all duration-300 hover:scale-[1.02] hover:-translate-y-0.5 ${TLD_STYLES[tld]}`}
+                >
+                  <span className="text-2xl font-bold">.{tld}</span>
+                </Link>
+              </StaggerItem>
             ))}
-          </div>
+          </StaggerContainer>
         </div>
       </section>
 
@@ -260,49 +320,41 @@ export default async function HomePage() {
           }} />
         </div>
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
+          <FadeIn className="text-center mb-16">
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 tracking-tight">
               How It Works
             </h2>
             <p className="text-gray-500 mt-4 max-w-xl mx-auto text-lg">
               Three simple steps to buy or sell domains at a fixed price
             </p>
-          </div>
-          <div className="grid md:grid-cols-3 gap-8 md:gap-12">
-            <div className="text-center group">
-              <div className="w-16 h-16 bg-gradient-to-br from-primary-500 to-primary-600 text-white rounded-2xl flex items-center justify-center mx-auto mb-6 text-2xl font-bold shadow-xl shadow-primary-500/25 group-hover:scale-110 group-hover:shadow-2xl group-hover:shadow-primary-500/30 transition-all duration-300">
-                1
-              </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-3 tracking-tight">
-                Sellers List
-              </h3>
-              <p className="text-gray-600 leading-relaxed">
-                Domain owners list domains they don&apos;t plan to renew. <span className="font-semibold text-emerald-600">Free to list</span>. We take $2 from the sale.
-              </p>
-            </div>
-            <div className="text-center group">
-              <div className="w-16 h-16 bg-gradient-to-br from-primary-500 to-primary-600 text-white rounded-2xl flex items-center justify-center mx-auto mb-6 text-2xl font-bold shadow-xl shadow-primary-500/25 group-hover:scale-110 group-hover:shadow-2xl group-hover:shadow-primary-500/30 transition-all duration-300">
-                2
-              </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-3 tracking-tight">
-                Buyers Browse
-              </h3>
-              <p className="text-gray-600 leading-relaxed">
-                Find domains at a fixed $99 price. No negotiation. No hidden fees. AI helps surface the best picks.
-              </p>
-            </div>
-            <div className="text-center group">
-              <div className="w-16 h-16 bg-gradient-to-br from-primary-500 to-primary-600 text-white rounded-2xl flex items-center justify-center mx-auto mb-6 text-2xl font-bold shadow-xl shadow-primary-500/25 group-hover:scale-110 group-hover:shadow-2xl group-hover:shadow-primary-500/30 transition-all duration-300">
-                3
-              </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-3 tracking-tight">
-                Transfer Complete
-              </h3>
-              <p className="text-gray-600 leading-relaxed">
-                We hold payment until transfer is confirmed. Seller gets paid. Buyer gets the domain.
-              </p>
-            </div>
-          </div>
+          </FadeIn>
+          <StaggerContainer className="grid md:grid-cols-3 gap-8 md:gap-12" staggerDelay={0.15}>
+            {[
+              { num: 1, title: 'Sellers List', desc: 'Domain owners list domains they don\'t plan to renew. Free to list. We take $2 from the sale.' },
+              { num: 2, title: 'Buyers Browse', desc: 'Find domains at a fixed $99 price. No negotiation. No hidden fees. AI helps surface the best picks.' },
+              { num: 3, title: 'Transfer Complete', desc: 'We hold payment until transfer is confirmed. Seller gets paid. Buyer gets the domain.' },
+            ].map((step) => (
+              <StaggerItem key={step.num}>
+                <div className="text-center group">
+                  <div className="w-16 h-16 bg-gradient-to-br from-primary-500 to-primary-600 text-white rounded-2xl flex items-center justify-center mx-auto mb-6 text-2xl font-bold shadow-xl shadow-primary-500/25 group-hover:scale-110 group-hover:shadow-2xl group-hover:shadow-primary-500/30 transition-all duration-300">
+                    {step.num}
+                  </div>
+                  <h3 className="text-xl font-semibold text-gray-900 mb-3 tracking-tight">
+                    {step.title}
+                  </h3>
+                  <p className="text-gray-600 leading-relaxed">
+                    {step.desc.includes('Free to list') ? (
+                      <>
+                        {step.desc.split('Free to list')[0]}
+                        <span className="font-semibold text-emerald-600">Free to list</span>
+                        {step.desc.split('Free to list')[1]}
+                      </>
+                    ) : step.desc}
+                  </p>
+                </div>
+              </StaggerItem>
+            ))}
+          </StaggerContainer>
         </div>
       </section>
 
@@ -313,7 +365,9 @@ export default async function HomePage() {
       {hasAnyDomains && (
         <section className="py-16 md:py-20 bg-white border-t border-gray-200/60">
           <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
-            <DomainAlertsForm />
+            <FadeIn>
+              <DomainAlertsForm />
+            </FadeIn>
           </div>
         </section>
       )}
@@ -334,23 +388,32 @@ export default async function HomePage() {
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-primary-500/10 rounded-full blur-[180px] animate-[pulse_10s_ease-in-out_infinite]" />
         </div>
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-3xl md:text-4xl font-bold text-white mb-4 tracking-tight">
-            Got domains you&apos;re not renewing?
-          </h2>
-          <p className="text-gray-400 text-lg md:text-xl mb-8 max-w-xl mx-auto leading-relaxed">
-            Turn your expiring domains into cash. <span className="font-semibold text-amber-300">Free to list</span>, sell for $99.
-          </p>
-          <Link href="/signup">
-            <Button variant="secondary" size="lg" className="shadow-xl shadow-black/30 hover:shadow-2xl">
-              Start Selling Today
-              <ArrowRight className="w-5 h-5 ml-2" />
-            </Button>
-          </Link>
-          <div className="mt-8">
-            <PaymentBadges className="[&>div]:bg-white/5 [&>div]:border [&>div]:border-white/10 [&>div]:text-gray-400" />
-          </div>
+          <FadeIn>
+            <h2 className="text-3xl md:text-4xl font-bold text-white mb-4 tracking-tight">
+              Got domains you&apos;re not renewing?
+            </h2>
+            <p className="text-gray-400 text-lg md:text-xl mb-8 max-w-xl mx-auto leading-relaxed">
+              Turn your expiring domains into cash. <span className="font-semibold text-amber-300">Free to list</span>, sell for $99.
+            </p>
+            <Link href="/signup">
+              <Button variant="secondary" size="lg" className="shadow-xl shadow-black/30 hover:shadow-2xl">
+                Start Selling Today
+                <ArrowRight className="w-5 h-5 ml-2" />
+              </Button>
+            </Link>
+            <div className="mt-8">
+              <PaymentBadges className="[&>div]:bg-white/5 [&>div]:border [&>div]:border-white/10 [&>div]:text-gray-400" />
+            </div>
+          </FadeIn>
         </div>
       </section>
     </div>
   );
+}
+
+// Wrapper component to use DomainCard (which is now a client component)
+import { DomainCard } from '@/components/domain';
+
+function DomainCardWrapper({ listing }: { listing: Listing }) {
+  return <DomainCard listing={listing} />;
 }

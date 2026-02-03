@@ -1,5 +1,6 @@
 export { DomainCard } from './domain-card';
 export { DomainGrid } from './domain-grid';
+export { FeaturedDomainCard } from './featured-domain-card';
 export { HeroSearch } from './hero-search';
 export { LikeButton } from './like-button';
 export { ListingFilters } from './listing-filters';

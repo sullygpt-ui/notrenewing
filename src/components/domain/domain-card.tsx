@@ -1,5 +1,8 @@
+'use client';
+
 import Link from 'next/link';
 import { Clock, Flame, Star, Calendar, Sparkles } from 'lucide-react';
+import { motion } from 'framer-motion';
 import { Badge, Tooltip } from '@/components/ui';
 import { WatchlistButton } from './watchlist-button';
 import { LikeButton } from './like-button';
@@ -14,15 +17,15 @@ interface DomainCardProps {
 }
 
 // TLD color mapping - refined, more subtle palette
-const TLD_COLORS: Record<string, { bg: string; text: string; border: string }> = {
-  com: { bg: 'bg-blue-50', text: 'text-blue-600', border: 'border-blue-200' },
-  net: { bg: 'bg-emerald-50', text: 'text-emerald-600', border: 'border-emerald-200' },
-  org: { bg: 'bg-violet-50', text: 'text-violet-600', border: 'border-violet-200' },
-  io: { bg: 'bg-indigo-50', text: 'text-indigo-600', border: 'border-indigo-200' },
-  ai: { bg: 'bg-fuchsia-50', text: 'text-fuchsia-600', border: 'border-fuchsia-200' },
-  co: { bg: 'bg-teal-50', text: 'text-teal-600', border: 'border-teal-200' },
-  app: { bg: 'bg-orange-50', text: 'text-orange-600', border: 'border-orange-200' },
-  dev: { bg: 'bg-cyan-50', text: 'text-cyan-600', border: 'border-cyan-200' },
+const TLD_COLORS: Record<string, { bg: string; text: string; border: string; glow: string }> = {
+  com: { bg: 'bg-blue-50', text: 'text-blue-600', border: 'border-blue-200', glow: 'shadow-blue-500/20' },
+  net: { bg: 'bg-emerald-50', text: 'text-emerald-600', border: 'border-emerald-200', glow: 'shadow-emerald-500/20' },
+  org: { bg: 'bg-violet-50', text: 'text-violet-600', border: 'border-violet-200', glow: 'shadow-violet-500/20' },
+  io: { bg: 'bg-indigo-50', text: 'text-indigo-600', border: 'border-indigo-200', glow: 'shadow-indigo-500/20' },
+  ai: { bg: 'bg-fuchsia-50', text: 'text-fuchsia-600', border: 'border-fuchsia-200', glow: 'shadow-fuchsia-500/20' },
+  co: { bg: 'bg-teal-50', text: 'text-teal-600', border: 'border-teal-200', glow: 'shadow-teal-500/20' },
+  app: { bg: 'bg-orange-50', text: 'text-orange-600', border: 'border-orange-200', glow: 'shadow-orange-500/20' },
+  dev: { bg: 'bg-cyan-50', text: 'text-cyan-600', border: 'border-cyan-200', glow: 'shadow-cyan-500/20' },
 };
 
 // AI tier display - refined styling
@@ -66,123 +69,132 @@ export function DomainCard({ listing, isSponsored = false, isWatched = false, sh
 
   const expirationInfo = getExpirationInfo(listing.expiration_date);
   const domainAge = getDomainAge(listing.domain_age_months);
-  const tldColor = TLD_COLORS[listing.tld] || { bg: 'bg-gray-50', text: 'text-gray-600', border: 'border-gray-200' };
+  const tldColor = TLD_COLORS[listing.tld] || { bg: 'bg-gray-50', text: 'text-gray-600', border: 'border-gray-200', glow: 'shadow-gray-500/20' };
   const aiTier = listing.ai_tier ? AI_TIERS[listing.ai_tier] : null;
 
   return (
     <Link href={`/domain/${listing.domain_name}`}>
-      <div className="group relative bg-white rounded-2xl border border-gray-200/60 p-5 shadow-sm shadow-gray-900/5 hover:shadow-xl hover:shadow-primary-500/10 hover:border-primary-300 hover:-translate-y-1 transition-all duration-300">
-        {/* Subtle gradient overlay on hover */}
-        <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-primary-50/0 to-primary-100/0 group-hover:from-primary-50/50 group-hover:to-transparent transition-all duration-300 pointer-events-none" />
+      <motion.div 
+        className="group relative"
+        whileHover={{ y: -4 }}
+        transition={{ duration: 0.2, ease: [0.25, 0.4, 0.25, 1] }}
+      >
+        {/* Gradient border on hover */}
+        <div className="absolute -inset-[1px] bg-gradient-to-r from-primary-400 via-violet-400 to-primary-400 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 blur-[1px]" />
         
-        {isSponsored && (
-          <span className="absolute -top-2.5 -right-2.5 px-2.5 py-1 bg-gradient-to-r from-amber-400 to-amber-500 text-white text-xs font-semibold rounded-full shadow-lg shadow-amber-500/25">
-            Sponsored
-          </span>
-        )}
-        {listing.staff_pick && !isSponsored && (
-          <span className="absolute -top-2.5 -right-2.5 px-2.5 py-1 bg-gradient-to-r from-orange-500 to-rose-500 text-white text-xs font-semibold rounded-full flex items-center gap-1 shadow-lg shadow-orange-500/25">
-            <Star className="w-3 h-3 fill-current" /> Staff Pick
-          </span>
-        )}
-        {showWatchlistButton && (
-          <div className="absolute top-3 right-3 z-10">
-            <WatchlistButton listingId={listing.id} isWatched={isWatched} size="sm" />
-          </div>
-        )}
+        <div className="relative bg-white rounded-2xl border border-gray-200/60 p-5 shadow-sm shadow-gray-900/5 group-hover:shadow-xl group-hover:shadow-primary-500/10 transition-all duration-300">
+          {/* Subtle gradient overlay on hover */}
+          <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-primary-50/0 to-violet-50/0 group-hover:from-primary-50/30 group-hover:to-violet-50/20 transition-all duration-300 pointer-events-none" />
+          
+          {isSponsored && (
+            <span className="absolute -top-2.5 -right-2.5 px-2.5 py-1 bg-gradient-to-r from-amber-400 to-amber-500 text-white text-xs font-semibold rounded-full shadow-lg shadow-amber-500/25">
+              Sponsored
+            </span>
+          )}
+          {listing.staff_pick && !isSponsored && (
+            <span className="absolute -top-2.5 -right-2.5 px-2.5 py-1 bg-gradient-to-r from-orange-500 to-rose-500 text-white text-xs font-semibold rounded-full flex items-center gap-1 shadow-lg shadow-orange-500/25">
+              <Star className="w-3 h-3 fill-current" /> Staff Pick
+            </span>
+          )}
+          {showWatchlistButton && (
+            <div className="absolute top-3 right-3 z-10">
+              <WatchlistButton listingId={listing.id} isWatched={isWatched} size="sm" />
+            </div>
+          )}
 
-        <div className="relative flex items-start justify-between gap-4">
-          <div className="min-w-0 flex-1">
-            {/* Domain name */}
-            <h3 className="text-lg font-semibold text-gray-900 group-hover:text-primary-600 break-all leading-tight tracking-tight">
-              {listing.domain_name}
-            </h3>
-            
-            {/* Badges row */}
-            <div className="flex items-center gap-2 mt-3 flex-wrap">
-              {/* Colored TLD badge */}
-              <span className={`inline-flex items-center px-2.5 py-0.5 text-xs font-semibold rounded-full border ${tldColor.bg} ${tldColor.text} ${tldColor.border}`}>
-                .{listing.tld}
-              </span>
+          <div className="relative flex items-start justify-between gap-4">
+            <div className="min-w-0 flex-1">
+              {/* Domain name */}
+              <h3 className="text-lg font-semibold text-gray-900 group-hover:text-primary-600 break-all leading-tight tracking-tight transition-colors">
+                {listing.domain_name}
+              </h3>
               
-              {/* AI Tier badge with tooltip */}
-              {aiTier && (
-                <Tooltip 
-                  content={
-                    <div className="max-w-[200px]">
-                      <div className="flex items-center gap-1 mb-1">
-                        <Sparkles className="w-3 h-3 text-amber-400" />
-                        <span className="font-semibold">AI Score: {aiTier.label}</span>
+              {/* Badges row */}
+              <div className="flex items-center gap-2 mt-3 flex-wrap">
+                {/* Colored TLD badge */}
+                <span className={`inline-flex items-center px-2.5 py-0.5 text-xs font-semibold rounded-full border ${tldColor.bg} ${tldColor.text} ${tldColor.border}`}>
+                  .{listing.tld}
+                </span>
+                
+                {/* AI Tier badge with tooltip */}
+                {aiTier && (
+                  <Tooltip 
+                    content={
+                      <div className="max-w-[200px]">
+                        <div className="flex items-center gap-1 mb-1">
+                          <Sparkles className="w-3 h-3 text-amber-400" />
+                          <span className="font-semibold">AI Score: {aiTier.label}</span>
+                        </div>
+                        {listing.ai_reasoning && (
+                          <p className="text-xs text-gray-300 leading-relaxed">
+                            {listing.ai_reasoning}
+                          </p>
+                        )}
                       </div>
-                      {listing.ai_reasoning && (
-                        <p className="text-xs text-gray-300 leading-relaxed">
-                          {listing.ai_reasoning}
-                        </p>
-                      )}
-                    </div>
-                  }
-                  position="bottom"
-                >
-                  <span className={`inline-flex items-center gap-0.5 px-2.5 py-0.5 text-xs font-medium rounded-full border border-transparent ${aiTier.bgColor} ${aiTier.color} cursor-help hover:border-current/20 transition-colors`}>
-                    {[...Array(aiTier.stars)].map((_, i) => (
-                      <Star key={i} className="w-2.5 h-2.5 fill-current" />
-                    ))}
-                  </span>
-                </Tooltip>
-              )}
+                    }
+                    position="bottom"
+                  >
+                    <span className={`inline-flex items-center gap-0.5 px-2.5 py-0.5 text-xs font-medium rounded-full border border-transparent ${aiTier.bgColor} ${aiTier.color} cursor-help hover:border-current/20 transition-colors`}>
+                      {[...Array(aiTier.stars)].map((_, i) => (
+                        <Star key={i} className="w-2.5 h-2.5 fill-current" />
+                      ))}
+                    </span>
+                  </Tooltip>
+                )}
+                
+                {/* Category badge */}
+                {listing.category && (
+                  <Badge variant="secondary" size="sm">
+                    {listing.category}
+                  </Badge>
+                )}
+              </div>
               
-              {/* Category badge */}
-              {listing.category && (
-                <Badge variant="secondary" size="sm">
-                  {listing.category}
-                </Badge>
-              )}
+              {/* Domain age & expiration info */}
+              <div className="flex items-center gap-3 mt-3 text-xs">
+                {domainAge && (
+                  <span className="flex items-center gap-1 text-gray-500">
+                    <Calendar className="w-3.5 h-3.5" />
+                    {domainAge}
+                  </span>
+                )}
+                {expirationInfo && (
+                  <span className={`flex items-center gap-1 font-medium ${
+                    expirationInfo.critical 
+                      ? 'text-red-600' 
+                      : expirationInfo.urgent 
+                        ? 'text-orange-600' 
+                        : 'text-gray-500'
+                  }`}>
+                    {expirationInfo.critical ? (
+                      <Flame className="w-3.5 h-3.5" />
+                    ) : expirationInfo.urgent ? (
+                      <Clock className="w-3.5 h-3.5" />
+                    ) : null}
+                    {expirationInfo.text}
+                  </span>
+                )}
+                {showLikeButton && (
+                  <LikeButton 
+                    listingId={listing.id} 
+                    initialLikeCount={listing.like_count || 0}
+                    size="sm"
+                  />
+                )}
+              </div>
             </div>
-            
-            {/* Domain age & expiration info */}
-            <div className="flex items-center gap-3 mt-3 text-xs">
-              {domainAge && (
-                <span className="flex items-center gap-1 text-gray-500">
-                  <Calendar className="w-3.5 h-3.5" />
-                  {domainAge}
-                </span>
-              )}
-              {expirationInfo && (
-                <span className={`flex items-center gap-1 font-medium ${
-                  expirationInfo.critical 
-                    ? 'text-red-600' 
-                    : expirationInfo.urgent 
-                      ? 'text-orange-600' 
-                      : 'text-gray-500'
-                }`}>
-                  {expirationInfo.critical ? (
-                    <Flame className="w-3.5 h-3.5" />
-                  ) : expirationInfo.urgent ? (
-                    <Clock className="w-3.5 h-3.5" />
-                  ) : null}
-                  {expirationInfo.text}
-                </span>
-              )}
-              {showLikeButton && (
-                <LikeButton 
-                  listingId={listing.id} 
-                  initialLikeCount={listing.like_count || 0}
-                  size="sm"
-                />
-              )}
-            </div>
-          </div>
 
-          <div className="text-right flex-shrink-0">
-            <span className="text-2xl font-bold text-gray-900 tracking-tight">$99</span>
-            <div className="mt-2">
-              <span className="inline-flex items-center justify-center text-xs font-semibold text-white bg-gradient-to-r from-primary-600 to-primary-500 px-4 py-2 rounded-xl shadow-md shadow-primary-500/25 group-hover:shadow-lg group-hover:shadow-primary-500/30 group-hover:from-primary-500 group-hover:to-primary-600 transition-all">
-                Buy Now
-              </span>
+            <div className="text-right flex-shrink-0">
+              <span className="text-2xl font-bold text-gray-900 tracking-tight">$99</span>
+              <div className="mt-2">
+                <span className="inline-flex items-center justify-center text-xs font-semibold text-white bg-gradient-to-r from-primary-600 to-primary-500 px-4 py-2 rounded-xl shadow-md shadow-primary-500/25 group-hover:shadow-lg group-hover:shadow-primary-500/30 group-hover:from-primary-500 group-hover:to-primary-600 transition-all">
+                  Buy Now
+                </span>
+              </div>
             </div>
           </div>
         </div>
-      </div>
+      </motion.div>
     </Link>
   );
 }
