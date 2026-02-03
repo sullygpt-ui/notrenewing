@@ -44,23 +44,23 @@ export function Header() {
   };
 
   return (
-    <header className="sticky top-0 z-50 bg-white border-b border-gray-200">
+    <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-xl border-b border-gray-200/60 shadow-sm shadow-gray-900/5">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           <div className="flex items-center gap-8">
             <Link href="/" className="flex items-center gap-2">
               <Logo size="md" />
             </Link>
-            <nav className="hidden md:flex items-center gap-6">
+            <nav className="hidden md:flex items-center gap-1">
               <Link
                 href="/browse"
-                className="text-sm font-medium text-gray-600 hover:text-gray-900"
+                className="text-sm font-medium text-gray-600 hover:text-gray-900 px-3 py-2 rounded-lg hover:bg-gray-100 transition-colors"
               >
                 Browse
               </Link>
               <Link
                 href="/recently-sold"
-                className="text-sm font-medium text-gray-600 hover:text-gray-900"
+                className="text-sm font-medium text-gray-600 hover:text-gray-900 px-3 py-2 rounded-lg hover:bg-gray-100 transition-colors"
               >
                 Recently Sold
               </Link>
@@ -71,14 +71,14 @@ export function Header() {
             <SearchBar size="sm" placeholder="Search domains..." />
           </div>
 
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-3">
             {loading ? (
-              <div className="h-9 w-24 bg-gray-100 animate-pulse rounded-lg" />
+              <div className="h-9 w-24 bg-gray-100 animate-pulse rounded-xl" />
             ) : user ? (
               <>
                 {isAdmin && (
                   <Link href="/admin">
-                    <Button variant="ghost" size="sm" className="text-purple-600 hover:text-purple-700">
+                    <Button variant="ghost" size="sm" className="text-violet-600 hover:text-violet-700 hover:bg-violet-50">
                       Admin
                     </Button>
                   </Link>

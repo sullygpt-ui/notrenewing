@@ -1,10 +1,17 @@
 import type { Metadata } from 'next';
 import Script from 'next/script';
 import * as Sentry from '@sentry/nextjs';
+import { Inter } from 'next/font/google';
 import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
 import { FeedbackButton } from '@/components/feedback-button';
 import './globals.css';
+
+const inter = Inter({ 
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-inter',
+});
 
 const GA_MEASUREMENT_ID = 'G-CGD9K892KP';
 
@@ -24,7 +31,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
+    <html lang="en" className={inter.variable}>
       <head>
         <Script
           src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`}
@@ -39,7 +46,7 @@ export default function RootLayout({
           `}
         </Script>
       </head>
-      <body className="min-h-screen bg-white text-gray-900 antialiased flex flex-col">
+      <body className={`${inter.className} min-h-screen bg-gray-50 text-gray-900 antialiased flex flex-col`}>
         <Header />
         <main className="flex-1">{children}</main>
         <Footer />
