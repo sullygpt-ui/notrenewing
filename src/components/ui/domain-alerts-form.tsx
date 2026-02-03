@@ -39,56 +39,72 @@ export function DomainAlertsForm() {
   };
 
   return (
-    <div className="bg-gradient-to-br from-primary-600 to-primary-700 rounded-2xl p-8 text-center">
-      <div className="inline-flex items-center justify-center w-14 h-14 bg-white/10 rounded-full mb-4">
-        <Bell className="w-7 h-7 text-white" />
+    <div className="relative bg-[#0a0a1a] rounded-2xl p-8 text-center overflow-hidden">
+      {/* Noise texture overlay */}
+      <div 
+        className="absolute inset-0 opacity-[0.4] mix-blend-soft-light pointer-events-none"
+        style={{
+          backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E")`,
+        }}
+      />
+      {/* Animated gradient orbs */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute -top-16 -left-16 w-48 h-48 bg-purple-600/25 rounded-full blur-[80px] animate-[pulse_10s_ease-in-out_infinite]" />
+        <div className="absolute -bottom-16 -right-16 w-56 h-56 bg-teal-500/20 rounded-full blur-[100px] animate-[pulse_12s_ease-in-out_infinite_1s]" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-blue-500/15 rounded-full blur-[120px] animate-[pulse_8s_ease-in-out_infinite]" />
       </div>
       
-      <h3 className="text-2xl font-bold text-white mb-2">
-        Get First Dibs on Premium Domains
-      </h3>
-      <p className="text-primary-100 mb-6 max-w-md mx-auto">
-        Be the first to know when high-quality domains hit the marketplace. 
-        Our AI scores every listing — you get alerts for the best ones.
-      </p>
-      
-      {status === 'success' ? (
-        <div className="bg-white/10 backdrop-blur rounded-lg p-4 max-w-md mx-auto">
-          <div className="flex items-center justify-center gap-2 text-white font-medium">
-            <CheckCircle className="w-5 h-5 text-green-300" />
-            {message}
-          </div>
+      <div className="relative">
+        <div className="inline-flex items-center justify-center w-14 h-14 bg-white/5 backdrop-blur-xl border border-white/10 rounded-full mb-4">
+          <Bell className="w-7 h-7 text-yellow-400" />
         </div>
-      ) : (
-        <form onSubmit={handleSubmit} className="max-w-md mx-auto">
-          <div className="flex gap-2">
-            <input
-              type="email"
-              placeholder="your@email.com"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              className="flex-1 px-4 py-3 rounded-lg text-sm bg-white/10 border border-white/20 text-white placeholder-primary-200 focus:outline-none focus:ring-2 focus:ring-white/30 focus:border-transparent"
-            />
-            <Button 
-              type="submit" 
-              variant="secondary"
-              size="lg"
-              isLoading={status === 'loading'}
-              className="px-6"
-            >
-              <Sparkles className="w-4 h-4 mr-1" />
-              Notify Me
-            </Button>
+        
+        <h3 className="text-2xl font-bold text-white mb-2">
+          Get First Dibs on Premium Domains
+        </h3>
+        <p className="text-gray-400 mb-6 max-w-md mx-auto">
+          Be the first to know when high-quality domains hit the marketplace. 
+          Our AI scores every listing — you get alerts for the best ones.
+        </p>
+        
+        {status === 'success' ? (
+          <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-lg p-4 max-w-md mx-auto">
+            <div className="flex items-center justify-center gap-2 text-white font-medium">
+              <CheckCircle className="w-5 h-5 text-green-400" />
+              {message}
+            </div>
           </div>
-          <p className="text-primary-200 text-xs mt-3">
-            No spam. Just alerts when exceptional domains are listed.
-          </p>
-        </form>
-      )}
-      {status === 'error' && (
-        <p className="mt-3 text-sm text-red-300">{message}</p>
-      )}
+        ) : (
+          <form onSubmit={handleSubmit} className="max-w-md mx-auto">
+            <div className="flex gap-2">
+              <input
+                type="email"
+                placeholder="your@email.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+                className="flex-1 px-4 py-3 rounded-lg text-sm bg-white/5 border border-white/10 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-white/20 focus:border-transparent backdrop-blur-xl"
+              />
+              <Button 
+                type="submit" 
+                variant="secondary"
+                size="lg"
+                isLoading={status === 'loading'}
+                className="px-6"
+              >
+                <Sparkles className="w-4 h-4 mr-1" />
+                Notify Me
+              </Button>
+            </div>
+            <p className="text-gray-500 text-xs mt-3">
+              No spam. Just alerts when exceptional domains are listed.
+            </p>
+          </form>
+        )}
+        {status === 'error' && (
+          <p className="mt-3 text-sm text-red-400">{message}</p>
+        )}
+      </div>
     </div>
   );
 }
