@@ -32,7 +32,7 @@ const testimonials = [
 
 export function Testimonials() {
   return (
-    <section className="py-20 bg-gradient-to-b from-gray-50 via-white to-gray-50 overflow-hidden">
+    <section className="py-20 bg-gradient-to-b from-[#faf9f7] via-[#fdfcfa] to-[#faf9f7] overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <FadeIn className="text-center mb-14">
           <h2 className="text-3xl md:text-4xl font-bold text-gray-900 tracking-tight mb-4">
@@ -44,7 +44,7 @@ export function Testimonials() {
         <StaggerContainer className="grid md:grid-cols-3 gap-8" staggerDelay={0.15}>
           {testimonials.map((testimonial, index) => (
             <StaggerItem key={index}>
-              <div className="relative bg-white rounded-2xl p-8 shadow-xl shadow-gray-900/5 border border-gray-100 hover:shadow-2xl hover:shadow-primary-500/10 hover:-translate-y-1 transition-all duration-300 h-full">
+              <div className="relative bg-[#fdfcfa] rounded-2xl p-8 shadow-xl shadow-gray-900/5 border border-gray-200/60 hover:shadow-2xl hover:shadow-primary-500/10 hover:-translate-y-1 transition-all duration-300 h-full">
                 {/* Decorative quote icon */}
                 <div className="absolute -top-4 -left-2 w-12 h-12 bg-gradient-to-br from-primary-100 to-primary-50 rounded-full flex items-center justify-center">
                   <Quote className="w-5 h-5 text-primary-500" />

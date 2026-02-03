@@ -24,7 +24,12 @@
 
 :root {
   --foreground: #0f172a;
-  --background: #f8fafc;
+  --background: #fdfcfa;
+  
+  /* Warm off-white palette */
+  --color-warm-50: #fdfcfa;
+  --color-warm-100: #faf9f7;
+  --color-warm-200: #f5f3f0;
 }
 
 body {

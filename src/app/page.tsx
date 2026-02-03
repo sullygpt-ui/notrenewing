@@ -101,7 +101,7 @@ export default async function HomePage() {
   const hasAnyDomains = hasFeaturedDomain || hasLeaderboardDomains || hasRecentDomains;
 
   return (
-    <div className="bg-gray-50">
+    <div className="bg-[#fdfcfa]">
       {/* Free Listing Banner */}
       <div className="bg-gradient-to-r from-amber-400 via-amber-300 to-yellow-400 py-3 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
@@ -186,7 +186,7 @@ export default async function HomePage() {
       </section>
 
       {/* Social Proof Bar */}
-      <section className="bg-white py-5 border-b border-gray-200/60 shadow-sm">
+      <section className="bg-[#faf9f7] py-5 border-b border-gray-200/60 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <SocialProof 
             soldThisWeek={soldThisWeek || 0} 
@@ -252,7 +252,7 @@ export default async function HomePage() {
 
       {/* Sponsored Section */}
       {hasSponsoredDomains && (
-        <section className="py-16 bg-white border-y border-gray-200/60">
+        <section className="py-16 bg-[#faf9f7] border-y border-gray-200/60">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <FadeIn>
               <div className="flex items-center gap-3 mb-10">
@@ -289,7 +289,7 @@ export default async function HomePage() {
       )}
 
       {/* Browse by TLD Section */}
-      <section className="py-16 bg-white border-y border-gray-200/60">
+      <section className="py-16 bg-[#faf9f7] border-y border-gray-200/60">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <FadeIn>
             <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-3 tracking-tight">Browse by Extension</h2>
@@ -363,7 +363,7 @@ export default async function HomePage() {
 
       {/* Domain Alerts Signup - Show here too if we have domains (secondary placement) */}
       {hasAnyDomains && (
-        <section className="py-16 md:py-20 bg-white border-t border-gray-200/60">
+        <section className="py-16 md:py-20 bg-[#faf9f7] border-t border-gray-200/60">
           <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
             <FadeIn>
               <DomainAlertsForm />

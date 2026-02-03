@@ -82,7 +82,7 @@ export function DomainCard({ listing, isSponsored = false, isWatched = false, sh
         {/* Gradient border on hover */}
         <div className="absolute -inset-[1px] bg-gradient-to-r from-primary-400 via-violet-400 to-primary-400 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 blur-[1px]" />
         
-        <div className="relative bg-white rounded-2xl border border-gray-200/60 p-5 shadow-sm shadow-gray-900/5 group-hover:shadow-xl group-hover:shadow-primary-500/10 transition-all duration-300">
+        <div className="relative bg-[#fdfcfa] rounded-2xl border border-gray-200/60 p-5 shadow-sm shadow-gray-900/5 group-hover:shadow-xl group-hover:shadow-primary-500/10 transition-all duration-300">
           {/* Subtle gradient overlay on hover */}
           <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-primary-50/0 to-violet-50/0 group-hover:from-primary-50/30 group-hover:to-violet-50/20 transition-all duration-300 pointer-events-none" />
           

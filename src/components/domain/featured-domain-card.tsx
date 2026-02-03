@@ -57,7 +57,7 @@ export function FeaturedDomainCard({ listing }: FeaturedDomainCardProps) {
         <div className="absolute -inset-[2px] bg-gradient-to-r from-primary-500 via-violet-500 to-amber-500 rounded-3xl opacity-75 blur-sm group-hover:opacity-100 group-hover:blur transition-all duration-300" />
         <div className="absolute -inset-[2px] bg-gradient-to-r from-primary-500 via-violet-500 to-amber-500 rounded-3xl opacity-0 group-hover:opacity-100 animate-[spin_3s_linear_infinite]" style={{ backgroundSize: '200% 200%' }} />
         
-        <div className="relative bg-white rounded-3xl p-8 shadow-2xl">
+        <div className="relative bg-[#fdfcfa] rounded-3xl p-8 shadow-2xl">
           {/* Featured badge */}
           <div className="absolute -top-3 left-8">
             <div className="flex items-center gap-1.5 px-4 py-1.5 bg-gradient-to-r from-amber-500 to-orange-500 text-white text-sm font-semibold rounded-full shadow-lg shadow-amber-500/30">

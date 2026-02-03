@@ -46,7 +46,7 @@ export default function RootLayout({
           `}
         </Script>
       </head>
-      <body className={`${inter.className} min-h-screen bg-gray-50 text-gray-900 antialiased flex flex-col`}>
+      <body className={`${inter.className} min-h-screen bg-[#fdfcfa] text-gray-900 antialiased flex flex-col`}>
         <Header />
         <main className="flex-1">{children}</main>
         <Footer />
