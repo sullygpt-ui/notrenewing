@@ -41,3 +41,5 @@ export { TiltCard } from './tilt-card';
 export { FloatingBadges } from './floating-badges';
 
 export { MagneticButton } from './magnetic-button';
+
+export { ScrollProgress } from './scroll-progress';

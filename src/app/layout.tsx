@@ -5,6 +5,7 @@ import { Inter, Space_Grotesk } from 'next/font/google';
 import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
 import { FeedbackButton } from '@/components/feedback-button';
+import { ScrollProgress } from '@/components/ui';
 import './globals.css';
 
 const inter = Inter({ 
@@ -53,6 +54,7 @@ export default function RootLayout({
         </Script>
       </head>
       <body className={`${inter.className} min-h-screen bg-[#fdfcfa] text-gray-900 antialiased flex flex-col`}>
+        <ScrollProgress />
         <Header />
         <main className="flex-1">{children}</main>
         <Footer />
