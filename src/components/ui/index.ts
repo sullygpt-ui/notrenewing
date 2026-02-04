@@ -43,3 +43,5 @@ export { FloatingBadges } from './floating-badges';
 export { MagneticButton } from './magnetic-button';
 
 export { ScrollProgress } from './scroll-progress';
+
+export { Confetti, useConfetti } from './confetti';

@@ -1,9 +1,13 @@
+'use client';
+
 import Link from 'next/link';
-import { Button, Card, CardContent } from '@/components/ui';
+import { Button, Card, CardContent, Confetti } from '@/components/ui';
 
 export default function CheckoutSuccessPage() {
   return (
     <div className="max-w-xl mx-auto px-4 py-16 text-center">
+      <Confetti />
+      
       <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
         <svg className="w-8 h-8 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
@@ -12,7 +16,7 @@ export default function CheckoutSuccessPage() {
 
       <h1 className="text-2xl font-bold text-gray-900 mb-4">Payment Successful!</h1>
       <p className="text-gray-600 mb-8">
-        Thank you for your purchase. We've sent transfer instructions to your email.
+        Thank you for your purchase. We&apos;ve sent transfer instructions to your email.
       </p>
 
       <Card className="mb-8 text-left">
@@ -25,7 +29,7 @@ export default function CheckoutSuccessPage() {
             </li>
             <li className="flex gap-3">
               <span className="flex-shrink-0 w-6 h-6 bg-primary-100 text-primary-600 rounded-full flex items-center justify-center text-xs font-medium">2</span>
-              <span>You'll receive an email with instructions on how to accept the transfer.</span>
+              <span>You&apos;ll receive an email with instructions on how to accept the transfer.</span>
             </li>
             <li className="flex gap-3">
               <span className="flex-shrink-0 w-6 h-6 bg-primary-100 text-primary-600 rounded-full flex items-center justify-center text-xs font-medium">3</span>
