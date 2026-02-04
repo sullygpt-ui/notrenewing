@@ -118,7 +118,7 @@ export default function CheckoutPage() {
           <div className="border-t border-gray-200 pt-4">
             <div className="flex justify-between mb-2">
               <span className="text-gray-600">Domain price</span>
-              <span className="font-medium">$99.00</span>
+              <span className="font-medium">$1.00</span>
             </div>
             <div className="flex justify-between mb-2">
               <span className="text-gray-600">Processing fee</span>
@@ -126,7 +126,7 @@ export default function CheckoutPage() {
             </div>
             <div className="flex justify-between text-lg font-bold border-t border-gray-200 pt-2 mt-2">
               <span>Total</span>
-              <span>$99.00</span>
+              <span>$1.00</span>
             </div>
           </div>
         </CardContent>
@@ -154,7 +154,7 @@ export default function CheckoutPage() {
             </div>
 
             <Button type="submit" className="w-full" size="lg" isLoading={submitting}>
-              Pay $99.00
+              Pay $1.00
             </Button>
 
             <p className="mt-4 text-xs text-gray-500 text-center">

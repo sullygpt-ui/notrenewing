@@ -28,7 +28,7 @@ export const stripe = {
 };
 
 export const PRICES = {
-  DOMAIN_PURCHASE: 9900, // $99 in cents
+  DOMAIN_PURCHASE: 100, // $1 TEST
   LISTING_FEE: 100, // $1 in cents
   SPONSORSHIP_7_DAYS: 1000, // $10
   SPONSORSHIP_30_DAYS: 2500, // $25
