@@ -89,16 +89,22 @@ export async function POST(request: NextRequest) {
             const sellerEmail = sellerData?.user?.email;
             const domainName = listingData.domain_name;
 
-            // Send emails (don't wait, fire and forget)
-            if (sellerEmail) {
-              sendDomainSoldEmail(sellerEmail, domainName, buyerEmail, sellerPayout).catch(
-                (err) => console.error('Failed to send sold email to seller:', err)
-              );
+            // Send emails (await to ensure they complete before function terminates)
+            try {
+              await sendPurchaseConfirmationEmail(buyerEmail, domainName, sellerEmail || 'seller');
+              console.log('Purchase confirmation email sent to:', buyerEmail);
+            } catch (err) {
+              console.error('Failed to send purchase confirmation to buyer:', err);
             }
 
-            sendPurchaseConfirmationEmail(buyerEmail, domainName, sellerEmail || 'seller').catch(
-              (err) => console.error('Failed to send purchase confirmation to buyer:', err)
-            );
+            if (sellerEmail) {
+              try {
+                await sendDomainSoldEmail(sellerEmail, domainName, buyerEmail, sellerPayout);
+                console.log('Domain sold email sent to:', sellerEmail);
+              } catch (err) {
+                console.error('Failed to send sold email to seller:', err);
+              }
+            }
           }
         }
 
