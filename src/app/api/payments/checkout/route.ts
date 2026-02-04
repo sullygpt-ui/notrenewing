@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/server';
+import { createServiceClient } from '@/lib/supabase/server';
 import { createCheckoutSession } from '@/lib/stripe';
 import type { Listing } from '@/types/database';
 
@@ -16,7 +16,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Valid email is required' }, { status: 400 });
     }
 
-    const supabase = await createClient();
+    const supabase = await createServiceClient();
 
     // Fetch the listing
     const { data: listingData, error: listingError } = await supabase
