@@ -106,7 +106,7 @@ export default async function HomePage() {
       <div className="bg-gradient-to-r from-amber-400 via-amber-300 to-yellow-400 py-3 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <p className="text-base font-semibold text-amber-900">
-            🎉 Now in Beta: <span className="font-bold">Free Listings</span> of up to 25 Domains!
+            Now in Beta: <span className="font-bold">Free Listings</span> of up to 25 Domains!
           </p>
         </div>
       </div>
