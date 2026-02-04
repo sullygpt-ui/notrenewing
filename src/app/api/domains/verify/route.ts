@@ -84,7 +84,7 @@ export async function POST(request: NextRequest) {
         status: 'active',
         verified_at: new Date().toISOString(),
         listed_at: new Date().toISOString(),
-        expires_at: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(), // 30 days
+        expires_at: domainInfo.expirationDate?.toISOString() || new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(), // Use domain expiration date, fallback to 30 days
         ai_score: score.score,
         ai_tier: score.tier,
         ai_scored_at: new Date().toISOString(),
