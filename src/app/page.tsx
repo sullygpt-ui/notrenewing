@@ -214,7 +214,7 @@ export default async function HomePage() {
               <div className="flex items-center justify-between mb-10">
                 <div>
                   <h2 className="text-2xl md:text-3xl font-bold text-gray-900 tracking-tight">Leaderboard</h2>
-                  <p className="text-gray-500 mt-2">Domains with the highest buyer interest</p>
+                  <p className="text-gray-500 mt-2">Domains with the highest buyer interest and automated domain score</p>
                 </div>
                 <Link href="/browse">
                   <Button variant="ghost" className="group">
