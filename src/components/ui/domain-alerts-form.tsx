@@ -70,7 +70,7 @@ export function DomainAlertsForm() {
         </motion.div>
         
         <h3 className="text-2xl md:text-3xl font-bold text-white mb-3 tracking-tight">
-          Get First Dibs on Premium Domains
+          Get First Dibs on Great Domains
         </h3>
         <p className="text-gray-400 mb-8 max-w-lg mx-auto leading-relaxed">
           Be the first to know when high-quality domains hit the marketplace. 
