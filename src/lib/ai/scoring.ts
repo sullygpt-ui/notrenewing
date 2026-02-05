@@ -117,3 +117,51 @@ export async function scoreDomainBatch(domainNames: string[]): Promise<Map<strin
 
   return results;
 }
+
+const USE_CASE_PROMPT = `You generate very short, punchy use-case suggestions for domain names. Think of it as a one-liner pitch for who would want this domain.
+
+Rules:
+- Maximum 60 characters
+- Be specific and creative
+- Focus on the business/brand opportunity
+- No generic phrases like "great for" or "perfect for"
+- Start with an action verb or specific industry/use
+- Make it intriguing
+
+Examples:
+- "startup.io" → "Launch your next unicorn"
+- "health.app" → "Wellness tracking made personal"
+- "cloud.net" → "Enterprise infrastructure branding"
+- "pizza.co" → "Local delivery empire awaits"
+- "legal.io" → "LegalTech SaaS platform"
+
+Respond with ONLY the use-case text, nothing else. No quotes, no explanation.`;
+
+export async function generateUseCase(domainName: string): Promise<string> {
+  try {
+    const message = await anthropic.messages.create({
+      model: 'claude-3-haiku-20240307',
+      max_tokens: 100,
+      temperature: 0.7, // Some creativity
+      messages: [
+        {
+          role: 'user',
+          content: `${USE_CASE_PROMPT}\n\nDomain: ${domainName}`,
+        },
+      ],
+    });
+
+    const responseText = message.content[0].type === 'text' ? message.content[0].text : '';
+    
+    // Clean up and truncate
+    let useCase = responseText.trim().replace(/^["']|["']$/g, '');
+    if (useCase.length > 80) {
+      useCase = useCase.substring(0, 77) + '...';
+    }
+    
+    return useCase;
+  } catch (error) {
+    console.error('AI use-case generation error:', error);
+    return '';
+  }
+}

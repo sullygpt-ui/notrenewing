@@ -34,6 +34,7 @@ export interface Listing {
   ai_tier: AITier | null;
   ai_reasoning: string | null;
   ai_scored_at: string | null;
+  use_case: string | null;  // AI-generated or seller-edited use case
   status: ListingStatus;
   is_sponsored: boolean;
   sponsored_until: string | null;

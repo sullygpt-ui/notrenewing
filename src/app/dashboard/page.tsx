@@ -4,7 +4,7 @@ import { ThumbsUp } from 'lucide-react';
 import { createClient } from '@/lib/supabase/server';
 import { Card, CardHeader, CardTitle, CardContent, Button, Badge } from '@/components/ui';
 import { ListingFilters } from '@/components/domain';
-import { PayoutSettings } from '@/components/dashboard';
+import { PayoutSettings, UseCaseEditor } from '@/components/dashboard';
 import type { Listing, Purchase } from '@/types/database';
 
 export const dynamic = 'force-dynamic';
@@ -256,6 +256,16 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
                 <div key={listing.id} className="py-4 flex items-center justify-between">
                   <div className="min-w-0 flex-1">
                     <p className="font-medium text-gray-900">{listing.domain_name}</p>
+                    {/* Use-case editor - only show for active listings */}
+                    {(listing.status === 'active' || listing.status === 'pending_verification') && (
+                      <div className="mt-1">
+                        <UseCaseEditor 
+                          listingId={listing.id} 
+                          domainName={listing.domain_name}
+                          initialUseCase={listing.use_case} 
+                        />
+                      </div>
+                    )}
                     <div className="flex flex-wrap items-center gap-3 text-sm text-gray-500 mt-1">
                       {listing.listed_at && (
                         <span>Listed {new Date(listing.listed_at).toLocaleDateString()}</span>

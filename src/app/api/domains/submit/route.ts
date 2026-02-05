@@ -3,6 +3,7 @@ import { createClient } from '@/lib/supabase/server';
 import { checkRateLimit } from '@/lib/api-utils';
 import { sendVerificationEmail } from '@/lib/email';
 import { lookupDomain } from '@/lib/dns/rdap';
+import { generateUseCase } from '@/lib/ai/scoring';
 
 interface DomainSubmission {
   domain: string;
@@ -111,6 +112,26 @@ export async function POST(request: NextRequest) {
           console.error(`Failed to send verification email for ${listing.domain_name}:`, err);
         }
       }
+    }
+
+    // Generate AI use-cases in background (don't block response)
+    if (createdListings) {
+      Promise.all(
+        createdListings.map(async (listing: any) => {
+          try {
+            const useCase = await generateUseCase(listing.domain_name);
+            if (useCase) {
+              await supabase
+                .from('listings')
+                .update({ use_case: useCase } as any)
+                .eq('id', listing.id);
+              console.log(`Use-case generated for ${listing.domain_name}: ${useCase}`);
+            }
+          } catch (err) {
+            console.error(`Failed to generate use-case for ${listing.domain_name}:`, err);
+          }
+        })
+      ).catch(console.error);
     }
 
     // Return listing IDs - listings are free

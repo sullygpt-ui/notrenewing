@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { Clock, Flame, Star, Calendar, Sparkles } from 'lucide-react';
+import { Clock, Flame, Star, Calendar, Sparkles, Lightbulb } from 'lucide-react';
 import { Badge, Tooltip, TiltCard } from '@/components/ui';
 import { WatchlistButton } from './watchlist-button';
 import { LikeButton } from './like-button';
@@ -106,6 +106,14 @@ export function DomainCard({ listing, isSponsored = false, isWatched = false, sh
               <h3 className="text-lg font-semibold text-gray-900 group-hover:text-primary-600 break-all leading-tight tracking-tight transition-colors">
                 {listing.domain_name}
               </h3>
+              
+              {/* Use-case line - shown on hover or always if exists */}
+              {listing.use_case && (
+                <p className="text-xs text-gray-500 mt-1 flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200 max-h-0 group-hover:max-h-6 overflow-hidden">
+                  <Lightbulb className="w-3 h-3 text-amber-500 flex-shrink-0" />
+                  <span className="truncate">{listing.use_case}</span>
+                </p>
+              )}
               
               {/* Badges row */}
               <div className="flex items-center gap-2 mt-3 flex-wrap">
