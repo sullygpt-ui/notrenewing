@@ -139,7 +139,7 @@ export default async function HomePage() {
           
           <FadeIn delay={0.1}>
             <p className="text-gray-400 text-lg md:text-xl mb-10 max-w-2xl mx-auto font-light leading-relaxed">
-              A fixed-price marketplace for expiring domains. No negotiations, no parking games, no renewals.
+              A fixed-price marketplace for expiring domains. No negotiations, no parking games, no auction drama.
             </p>
           </FadeIn>
           

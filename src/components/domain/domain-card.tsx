@@ -94,11 +94,19 @@ export function DomainCard({ listing, isSponsored = false, isWatched = false, sh
               <Star className="w-3 h-3 fill-current" /> Staff Pick
             </span>
           )}
-          {showWatchlistButton && (
-            <div className="absolute top-3 right-3 z-10">
+          {/* Like and Watchlist buttons in top-right corner */}
+          <div className="absolute top-3 right-3 z-10 flex items-center gap-2">
+            {showLikeButton && (
+              <LikeButton 
+                listingId={listing.id} 
+                initialLikeCount={listing.like_count || 0}
+                size="sm"
+              />
+            )}
+            {showWatchlistButton && (
               <WatchlistButton listingId={listing.id} isWatched={isWatched} size="sm" />
-            </div>
-          )}
+            )}
+          </div>
 
           <div className="relative flex items-start justify-between gap-4">
             <div className="min-w-0 flex-1">
@@ -179,13 +187,6 @@ export function DomainCard({ listing, isSponsored = false, isWatched = false, sh
                     ) : null}
                     {expirationInfo.text}
                   </span>
-                )}
-                {showLikeButton && (
-                  <LikeButton 
-                    listingId={listing.id} 
-                    initialLikeCount={listing.like_count || 0}
-                    size="sm"
-                  />
                 )}
               </div>
             </div>
