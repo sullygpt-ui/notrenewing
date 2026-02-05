@@ -139,11 +139,7 @@ export default async function HomePage() {
           
           <FadeIn delay={0.1}>
             <p className="text-gray-400 text-lg md:text-xl mb-10 max-w-2xl mx-auto font-light leading-relaxed">
-              Every domain is{' '}
-              <span className="font-semibold text-white bg-white/10 px-3 py-1 rounded-lg border border-white/10">
-                $99
-              </span>
-              {' '}— no negotiation, no hassle.
+              A fixed-price marketplace for expiring domains. No negotiations, no parking games, no renewals.
             </p>
           </FadeIn>
           
