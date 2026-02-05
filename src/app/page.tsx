@@ -237,6 +237,28 @@ export default async function HomePage() {
         </section>
       )}
 
+      {/* Browse by TLD Section - Moved right after Leaderboard */}
+      <section className="py-16 bg-[#faf9f7] border-y border-gray-200/60">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <FadeIn>
+            <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-3 tracking-tight">Browse by Extension</h2>
+            <p className="text-gray-500 mb-10">Find domains by your preferred TLD</p>
+          </FadeIn>
+          <StaggerContainer className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4" staggerDelay={0.05}>
+            {SUPPORTED_TLDS.map((tld) => (
+              <StaggerItem key={tld}>
+                <Link
+                  href={`/browse?tld=${tld}`}
+                  className={`block rounded-2xl border-2 p-6 text-center transition-all duration-300 hover:scale-[1.02] hover:-translate-y-0.5 ${TLD_STYLES[tld]}`}
+                >
+                  <span className="text-2xl font-bold">.{tld}</span>
+                </Link>
+              </StaggerItem>
+            ))}
+          </StaggerContainer>
+        </div>
+      </section>
+
       {/* Sponsored Section */}
       {hasSponsoredDomains && (
         <section className="py-16 bg-[#faf9f7] border-y border-gray-200/60">
@@ -275,28 +297,6 @@ export default async function HomePage() {
         </section>
       )}
 
-      {/* Browse by TLD Section */}
-      <section className="py-16 bg-[#faf9f7] border-y border-gray-200/60">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <FadeIn>
-            <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-3 tracking-tight">Browse by Extension</h2>
-            <p className="text-gray-500 mb-10">Find domains by your preferred TLD</p>
-          </FadeIn>
-          <StaggerContainer className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4" staggerDelay={0.05}>
-            {SUPPORTED_TLDS.map((tld) => (
-              <StaggerItem key={tld}>
-                <Link
-                  href={`/browse?tld=${tld}`}
-                  className={`block rounded-2xl border-2 p-6 text-center transition-all duration-300 hover:scale-[1.02] hover:-translate-y-0.5 ${TLD_STYLES[tld]}`}
-                >
-                  <span className="text-2xl font-bold">.{tld}</span>
-                </Link>
-              </StaggerItem>
-            ))}
-          </StaggerContainer>
-        </div>
-      </section>
-
       {/* How It Works Section */}
       <section className="py-20 md:py-24 relative overflow-hidden">
         {/* Subtle background pattern */}
@@ -317,9 +317,9 @@ export default async function HomePage() {
           </FadeIn>
           <StaggerContainer className="grid md:grid-cols-3 gap-8 md:gap-12" staggerDelay={0.15}>
             {[
-              { num: 1, title: 'Sellers List', desc: 'Domain owners list domains they don\'t plan to renew. Free to list. We take $2 from the sale.' },
-              { num: 2, title: 'Buyers Browse', desc: 'Find domains at a fixed $99 price. No negotiation. No hidden fees. AI helps surface the best picks.' },
-              { num: 3, title: 'Transfer Complete', desc: 'We hold payment until transfer is confirmed. Seller gets paid. Buyer gets the domain.' },
+              { num: 1, title: 'Sellers List', desc: 'List domains you won\'t renew. Free to list. We take $2 only when it sells.' },
+              { num: 2, title: 'Buyers Browse', desc: 'All domains are $99. No negotiation. No hidden fees. AI helps surface the best picks.' },
+              { num: 3, title: 'Transfer Complete', desc: 'Funds held securely until transfer completes. Simple. Safe. Done.' },
             ].map((step) => (
               <StaggerItem key={step.num}>
                 <div className="text-center group">

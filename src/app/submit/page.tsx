@@ -234,6 +234,13 @@ export default function SubmitPage() {
                     {activeListingCount > 0 && ` You currently have ${activeListingCount} listing${activeListingCount === 1 ? '' : 's'}.`}
                   </p>
                 </div>
+
+                <div>
+                  <h4 className="font-medium mb-1">Quality Standards</h4>
+                  <p className="text-blue-700">
+                    We reserve the right to remove any listing at any time for any reason. We curate our marketplace to maintain quality and ensure buyers find valuable domains.
+                  </p>
+                </div>
               </div>
             </CardContent>
           </Card>
