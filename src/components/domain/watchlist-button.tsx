@@ -16,9 +16,10 @@ export function WatchlistButton({ listingId, isWatched: initialIsWatched, onTogg
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
-  const handleClick = async (e: React.MouseEvent) => {
+  const handleClick = async (e: React.MouseEvent | React.TouchEvent) => {
     e.preventDefault();
     e.stopPropagation();
+    e.nativeEvent.stopImmediatePropagation();
     
     setLoading(true);
     try {
@@ -45,6 +46,11 @@ export function WatchlistButton({ listingId, isWatched: initialIsWatched, onTogg
     }
   };
 
+  const stopEvent = (e: React.MouseEvent | React.TouchEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+  };
+
   const sizeClasses = size === 'sm' 
     ? 'p-1.5' 
     : 'p-2';
@@ -55,6 +61,8 @@ export function WatchlistButton({ listingId, isWatched: initialIsWatched, onTogg
     <button
       type="button"
       onClick={handleClick}
+      onMouseDown={stopEvent}
+      onTouchStart={stopEvent}
       disabled={loading}
       className={`${sizeClasses} rounded-lg transition-colors ${
         isWatched 
