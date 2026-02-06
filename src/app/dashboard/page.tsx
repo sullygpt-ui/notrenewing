@@ -104,7 +104,6 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
     : sortedListings;
 
   const totalEarnings = soldListings.length * 9583; // $95.83 per sale in cents
-  const totalLikes = listings.reduce((sum, l) => sum + (l.like_count ?? 0), 0);
 
   const filterCounts = {
     all: listings.length,
@@ -127,7 +126,7 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
       </div>
 
       {/* Stats Grid */}
-      <div className="grid grid-cols-2 md:grid-cols-6 gap-4 mb-8">
+      <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8">
         <Link href="/dashboard?status=active">
           <Card className={`cursor-pointer hover:border-primary-300 hover:shadow-md transition-all ${statusFilter === 'active' ? 'border-primary-500 ring-2 ring-primary-200' : ''}`}>
             <CardContent>
@@ -164,14 +163,6 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
           <CardContent>
             <p className="text-sm text-gray-500">Total Earnings</p>
             <p className="text-3xl font-bold text-gray-900">${(totalEarnings / 100).toFixed(2)}</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent>
-            <p className="text-sm text-gray-500 flex items-center gap-1">
-              <ThumbsUp className="w-3.5 h-3.5" /> Total Likes
-            </p>
-            <p className="text-3xl font-bold text-primary-600">{totalLikes}</p>
           </CardContent>
         </Card>
       </div>
