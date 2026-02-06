@@ -52,6 +52,7 @@ export function WatchlistButton({ listingId, isWatched: initialIsWatched, onTogg
 
   return (
     <button
+      type="button"
       onClick={handleClick}
       disabled={loading}
       className={`${sizeClasses} rounded-lg transition-colors ${

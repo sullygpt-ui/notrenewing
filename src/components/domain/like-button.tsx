@@ -94,6 +94,7 @@ export function LikeButton({
 
   return (
     <button
+      type="button"
       onClick={handleClick}
       disabled={loading}
       className={`${sizeClasses} inline-flex items-center rounded-lg font-medium transition-all ${
