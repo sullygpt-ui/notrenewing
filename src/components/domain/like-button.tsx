@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { ThumbsUp } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 
 interface LikeButtonProps {
   listingId: string;
@@ -21,6 +22,7 @@ export function LikeButton({
   const [hasLiked, setHasLiked] = useState(initialHasLiked);
   const [likeCount, setLikeCount] = useState(initialLikeCount);
   const [loading, setLoading] = useState(false);
+  const router = useRouter();
 
   // Fetch initial like state on mount
   useEffect(() => {
@@ -46,6 +48,7 @@ export function LikeButton({
     setLoading(true);
     
     // Optimistic update
+    const wasLiked = hasLiked;
     setHasLiked(!hasLiked);
     setLikeCount(prev => hasLiked ? prev - 1 : prev + 1);
     
@@ -56,19 +59,28 @@ export function LikeButton({
         body: JSON.stringify({ listingId }),
       });
 
+      // Redirect to login if not authenticated
+      if (response.status === 401) {
+        // Revert optimistic update
+        setHasLiked(wasLiked);
+        setLikeCount(prev => wasLiked ? prev : prev - 1);
+        router.push('/login?redirect=' + encodeURIComponent(window.location.pathname));
+        return;
+      }
+
       if (response.ok) {
         const data = await response.json();
         setLikeCount(data.likeCount);
       } else {
         // Revert optimistic update on error
-        setHasLiked(hasLiked);
-        setLikeCount(prev => hasLiked ? prev + 1 : prev - 1);
+        setHasLiked(wasLiked);
+        setLikeCount(prev => wasLiked ? prev + 1 : prev - 1);
       }
     } catch (error) {
       console.error('Failed to update like:', error);
       // Revert optimistic update
-      setHasLiked(hasLiked);
-      setLikeCount(prev => hasLiked ? prev + 1 : prev - 1);
+      setHasLiked(wasLiked);
+      setLikeCount(prev => wasLiked ? prev + 1 : prev - 1);
     } finally {
       setLoading(false);
     }

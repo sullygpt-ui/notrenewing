@@ -236,6 +236,13 @@ export default function SubmitPage() {
                 </div>
 
                 <div>
+                  <h4 className="font-medium mb-1">Use-Case / Pitch</h4>
+                  <p className="text-blue-700">
+                    Each domain gets an <strong>AI-generated use-case</strong> to help buyers understand its potential. You can edit or customize this from your dashboard after submission.
+                  </p>
+                </div>
+
+                <div>
                   <h4 className="font-medium mb-1">Quality Standards</h4>
                   <p className="text-blue-700">
                     We reserve the right to remove any listing at any time for any reason. We curate our marketplace to maintain quality and ensure buyers find valuable domains.

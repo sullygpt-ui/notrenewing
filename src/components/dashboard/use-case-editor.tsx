@@ -86,7 +86,7 @@ export function UseCaseEditor({ listingId, domainName, initialUseCase }: UseCase
             {savedUseCase}
           </span>
         ) : (
-          <span className="text-gray-400 italic">No use-case set</span>
+          <span className="text-gray-400 italic">Click to add a pitch (or let AI generate one)</span>
         )}
         <button
           onClick={() => setIsEditing(true)}

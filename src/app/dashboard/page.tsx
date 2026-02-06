@@ -1,11 +1,11 @@
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
-import { ThumbsUp } from 'lucide-react';
+import { ThumbsUp, Pencil, Heart } from 'lucide-react';
 import { createClient } from '@/lib/supabase/server';
 import { Card, CardHeader, CardTitle, CardContent, Button, Badge } from '@/components/ui';
 import { ListingFilters } from '@/components/domain';
-import { PayoutSettings, UseCaseEditor } from '@/components/dashboard';
-import type { Listing, Purchase } from '@/types/database';
+import { PayoutSettings, UseCaseEditor, WatchlistDomainsList } from '@/components/dashboard';
+import type { Listing, Purchase, DomainLike } from '@/types/database';
 
 export const dynamic = 'force-dynamic';
 
@@ -43,6 +43,32 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
 
   // Create a map of listing ID to purchase for quick lookup
   const purchaseByListingId = new Map(purchases.map(p => [p.listing_id, p]));
+
+  // Fetch user's watchlist (saved/hearted domains)
+  const { data: watchlistData } = await supabase
+    .from('watchlist')
+    .select(`
+      id,
+      listing_id,
+      created_at,
+      listing:listings!inner (
+        id,
+        domain_name,
+        tld,
+        status,
+        ai_tier,
+        category,
+        expiration_date
+      )
+    `)
+    .eq('user_id', user.id)
+    .order('created_at', { ascending: false });
+
+  const watchlistDomains = (watchlistData || []).map((item: any) => ({
+    watchlistId: item.id,
+    createdAt: item.created_at,
+    ...item.listing
+  }));
 
   const activeListings = listings.filter(l => l.status === 'active');
   const pendingPayment = listings.filter(l => l.status === 'pending_payment');
@@ -154,6 +180,26 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
       <div className="mb-8">
         <PayoutSettings />
       </div>
+
+      {/* Saved Domains (Watchlist) */}
+      {watchlistDomains.length > 0 && (
+        <div className="mb-8">
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between">
+              <CardTitle className="flex items-center gap-2">
+                <Heart className="w-5 h-5 text-red-500 fill-current" />
+                Saved Domains ({watchlistDomains.length})
+              </CardTitle>
+              <Link href="/browse">
+                <Button size="sm" variant="outline">Browse More</Button>
+              </Link>
+            </CardHeader>
+            <CardContent>
+              <WatchlistDomainsList domains={watchlistDomains} />
+            </CardContent>
+          </Card>
+        </div>
+      )}
 
       {/* Pending Transfers Alert */}
       {pendingTransfers.length > 0 && (
@@ -318,6 +364,13 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
                     {listing.status === 'pending_verification' && (
                       <Link href={`/listings/${listing.id}/verify`}>
                         <Button variant="outline" size="sm">Verify</Button>
+                      </Link>
+                    )}
+                    {(listing.status === 'active' || listing.status === 'pending_verification' || listing.status === 'pending_payment') && (
+                      <Link href={`/dashboard/listings/${listing.id}/edit`}>
+                        <Button variant="ghost" size="sm" title="Edit listing">
+                          <Pencil className="w-4 h-4" />
+                        </Button>
                       </Link>
                     )}
                     {listing.status === 'sold' && purchaseByListingId.get(listing.id) && (
