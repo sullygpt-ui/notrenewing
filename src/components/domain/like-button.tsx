@@ -43,10 +43,8 @@ export function LikeButton({
     fetchLikeState();
   }, [listingId]);
 
-  const handleClick = async (e: React.MouseEvent | React.TouchEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    e.nativeEvent.stopImmediatePropagation();
+  const handleClick = async () => {
+    if (loading) return;
     
     setLoading(true);
     
@@ -96,17 +94,10 @@ export function LikeButton({
 
   const iconSize = size === 'sm' ? 'w-3.5 h-3.5' : 'w-4 h-4';
 
-  const stopEvent = (e: React.MouseEvent | React.TouchEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-  };
-
   return (
     <button
       type="button"
       onClick={handleClick}
-      onMouseDown={stopEvent}
-      onTouchStart={stopEvent}
       disabled={loading}
       className={`${sizeClasses} inline-flex items-center rounded-lg font-medium transition-all ${
         hasLiked 

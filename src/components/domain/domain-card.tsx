@@ -1,6 +1,6 @@
 'use client';
 
-import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { Clock, Flame, Star, Calendar, Sparkles, Lightbulb } from 'lucide-react';
 import { Badge, Tooltip, TiltCard } from '@/components/ui';
 import { WatchlistButton } from './watchlist-button';
@@ -36,6 +36,7 @@ const AI_TIERS: Record<string, { label: string; color: string; bgColor: string; 
 };
 
 export function DomainCard({ listing, isSponsored = false, isWatched = false, showWatchlistButton = false, showLikeButton = true }: DomainCardProps) {
+  const router = useRouter();
 
   const getExpirationInfo = (date: string | null) => {
     if (!date) return null;
@@ -66,13 +67,22 @@ export function DomainCard({ listing, isSponsored = false, isWatched = false, sh
     return `${years}yr${years > 1 ? 's' : ''} old`;
   };
 
+  const handleCardClick = (e: React.MouseEvent) => {
+    // Don't navigate if clicking on a button
+    const target = e.target as HTMLElement;
+    if (target.closest('button')) {
+      return;
+    }
+    router.push(`/domain/${listing.domain_name}`);
+  };
+
   const expirationInfo = getExpirationInfo(listing.expiration_date);
   const domainAge = getDomainAge(listing.domain_age_months);
   const tldColor = TLD_COLORS[listing.tld] || { bg: 'bg-gray-50', text: 'text-gray-600', border: 'border-gray-200', glow: 'shadow-gray-500/20' };
   const aiTier = listing.ai_tier ? AI_TIERS[listing.ai_tier] : null;
 
   return (
-    <Link href={`/domain/${listing.domain_name}`}>
+    <div onClick={handleCardClick} className="cursor-pointer">
       <TiltCard className="group relative" tiltAmount={8} scale={1.02}>
         {/* Gradient border on hover */}
         <div className="absolute -inset-[1px] bg-gradient-to-r from-primary-400 via-violet-400 to-primary-400 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 blur-[1px]" />
@@ -202,6 +212,6 @@ export function DomainCard({ listing, isSponsored = false, isWatched = false, sh
           </div>
         </div>
       </TiltCard>
-    </Link>
+    </div>
   );
 }
