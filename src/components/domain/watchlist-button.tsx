@@ -26,6 +26,7 @@ export function WatchlistButton({ listingId, isWatched: initialIsWatched, onTogg
         method: isWatched ? 'DELETE' : 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ listingId }),
+        credentials: 'include',
       });
 
       if (response.status === 401) {

@@ -33,6 +33,7 @@ export function WatchlistDomainsList({ domains: initialDomains }: WatchlistDomai
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ listingId }),
+        credentials: 'include',
       });
 
       if (response.ok) {

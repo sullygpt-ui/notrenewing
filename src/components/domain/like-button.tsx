@@ -28,7 +28,9 @@ export function LikeButton({
   useEffect(() => {
     const fetchLikeState = async () => {
       try {
-        const response = await fetch(`/api/likes?listingId=${listingId}`);
+        const response = await fetch(`/api/likes?listingId=${listingId}`, {
+          credentials: 'include',
+        });
         if (response.ok) {
           const data = await response.json();
           setHasLiked(data.hasLiked);
@@ -57,6 +59,7 @@ export function LikeButton({
         method: hasLiked ? 'DELETE' : 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ listingId }),
+        credentials: 'include',
       });
 
       // Redirect to login if not authenticated
